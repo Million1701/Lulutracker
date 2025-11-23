@@ -1,8 +1,11 @@
+// PetForm.tsx - VERSIÓN ACTUALIZADA
+
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { Upload, X, Plus, Trash2 } from 'lucide-react';
 import Card from './ui/Card';
 import Input from './ui/Input';
 import Button from './ui/Button';
+import MultiPhotoUploader from './MultiPhotoUploader';
 import {
   FormErrors,
   OtherLink,
@@ -126,115 +129,23 @@ const PetForm: React.FC<PetFormProps> = ({
     }
   };
 
-  const handleExtraPhotosChange = async (
-    e: ChangeEvent<HTMLInputElement>
-  ): Promise<void> => {
-    const files = Array.from(e.target.files || []);
-
-    // Limpiar el input para permitir seleccionar los mismos archivos de nuevo
-    e.target.value = '';
-
-    if (files.length === 0) return;
-
-    const remainingSlots = 5 - previews.extra_photos.length;
-    const filesToAdd = files.slice(0, remainingSlots);
-
-    // Mostrar advertencia si se intentan subir más fotos de las permitidas
-    if (files.length > remainingSlots) {
-      setErrors((prev) => ({
-        ...prev,
-        extra_photos: `Solo puedes agregar ${remainingSlots} foto(s) más. Máximo 5 fotos adicionales.`,
-      }));
-    } else {
-      // Limpiar error previo si existe
-      setErrors((prev) => ({
-        ...prev,
-        extra_photos: '',
-      }));
-    }
-
-    // Validar tamaño de archivos ANTES de procesarlos
-    const invalidFiles = filesToAdd.filter(
-      (file) => file.size > 5 * 1024 * 1024
-    );
-    if (invalidFiles.length > 0) {
-      setErrors((prev) => ({
-        ...prev,
-        extra_photos: 'Una o más imágenes superan el límite de 5MB',
-      }));
-      return; // Detener completamente si hay archivos inválidos
-    }
-
-    // Procesar archivos de forma secuencial para evitar problemas de memoria
-    const newPreviews: string[] = [];
-
-    for (const file of filesToAdd) {
-      try {
-        const imageUrl = await readFileAsDataURL(file);
-        newPreviews.push(imageUrl);
-      } catch (error) {
-        console.error('Error al procesar imagen:', error);
-        setErrors((prev) => ({
-          ...prev,
-          extra_photos:
-            'Error al procesar una o más imágenes. Intenta de nuevo.',
-        }));
-        return;
-      }
-    }
-
-    // Actualizar estado solo una vez con todas las imágenes procesadas
+  // ⬇️ NUEVO: Handler para fotos extras usando el componente
+  const handleExtraPhotosChange = (photos: string[]): void => {
     setPreviews((prev) => ({
       ...prev,
-      extra_photos: [...prev.extra_photos, ...newPreviews],
+      extra_photos: photos,
     }));
-
     setFormData((prev) => ({
       ...prev,
-      extra_photos: [...(prev.extra_photos || []), ...newPreviews],
+      extra_photos: photos,
     }));
   };
 
-  const readFileAsDataURL = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
-
-      reader.onerror = () => {
-        reject(new Error('Error al leer el archivo'));
-      };
-
-      reader.onabort = () => {
-        reject(new Error('Lectura de archivo cancelada'));
-      };
-
-      reader.readAsDataURL(file);
-    });
-  };
-
-  // Función para remover foto (asegúrate de tenerla implementada)
-  const removeExtraPhoto = (indexToRemove: number): void => {
-    setPreviews((prev) => ({
-      ...prev,
-      extra_photos: prev.extra_photos.filter(
-        (_, index) => index !== indexToRemove
-      ),
-    }));
-
-    setFormData((prev) => ({
-      ...prev,
-      extra_photos: (prev.extra_photos || []).filter(
-        (_, index) => index !== indexToRemove
-      ),
-    }));
-
-    // Limpiar error si existe
+  // ⬇️ NUEVO: Handler para errores de fotos extras
+  const handleExtraPhotosError = (errorMessage: string): void => {
     setErrors((prev) => ({
       ...prev,
-      extra_photos: '',
+      extra_photos: errorMessage,
     }));
   };
 
@@ -304,7 +215,6 @@ const PetForm: React.FC<PetFormProps> = ({
       const dataToSubmit = { ...formData };
 
       if (isEditMode) {
-        // Modo edición
         const { updatePet } = petService;
         const updatedData = await updatePet(actualPetId!, dataToSubmit);
 
@@ -313,7 +223,6 @@ const PetForm: React.FC<PetFormProps> = ({
           navigate(`/pet/${updatedData.qr_code}`);
         }
       } else {
-        // Modo creación
         dataToSubmit.user_id = user.id;
         dataToSubmit.is_active = true;
 
@@ -349,8 +258,8 @@ const PetForm: React.FC<PetFormProps> = ({
   ];
 
   return (
-    <div className="max-w-2xl mx-auto w-full md-w-screen h-full sm:h-fit overflow-auto">
-      <Card className="p-8 rounded-none sm:rounded-lg mb-32 sm:mb-8">
+    <div className="max-w-2xl mx-auto w-full">
+      <Card className="p-4 sm:p-8 rounded-none sm:rounded-lg mb-32 sm:mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           {isEditMode ? 'Editar mascota' : 'Registra tu mascota'}
         </h2>
@@ -361,7 +270,7 @@ const PetForm: React.FC<PetFormProps> = ({
         </p>
 
         {/* Navegación por pestañas */}
-        <div className="flex overflow-x-auto mb-8 border-b border-gray-200">
+        <div className="flex overflow-x-auto mb-8 border-b border-gray-200 -mx-4 px-4 sm:mx-0 sm:px-0">
           {sections.map((section) => (
             <button
               key={section.id}
@@ -641,59 +550,19 @@ const PetForm: React.FC<PetFormProps> = ({
                 )}
               </div>
 
+              {/* ⬇️ NUEVO: Usar el componente MultiPhotoUploader */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Fotos adicionales (máximo 5)
                 </label>
-
-                {previews.extra_photos.length > 0 && (
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    {previews.extra_photos.map((preview, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={preview}
-                          alt={`Extra ${index + 1}`}
-                          className="h-32 w-full rounded-lg object-cover"
-                          loading="lazy"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeExtraPhoto(index)}
-                          className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white transition-colors hover:bg-red-600 shadow-lg"
-                          aria-label={`Eliminar foto ${index + 1}`}
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {previews.extra_photos.length < 5 && (
-                  <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 py-8 transition-colors hover:border-blue-500 hover:bg-blue-50">
-                    <Plus className="mb-2 h-8 w-8 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700">
-                      Agregar más fotos
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {previews.extra_photos.length}/5 fotos agregadas
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleExtraPhotosChange}
-                      className="hidden"
-                      capture="environment" // Añadido: Abre cámara en móviles
-                    />
-                  </label>
-                )}
-
-                {errors.extra_photos && (
-                  <p className="mt-1 text-sm text-red-600" role="alert">
-                    {errors.extra_photos}
-                  </p>
-                )}
+                <MultiPhotoUploader
+                  photos={previews.extra_photos}
+                  maxPhotos={5}
+                  maxSizeMB={5}
+                  onPhotosChange={handleExtraPhotosChange}
+                  error={errors.extra_photos}
+                  onError={handleExtraPhotosError}
+                />
               </div>
             </div>
           )}
@@ -780,8 +649,8 @@ const PetForm: React.FC<PetFormProps> = ({
             </div>
           )}
 
-          {/* Botones de acción */}
-          <div className="flex gap-4 pt-6 pb-12 sm:pb-0 border-t border-gray-200">
+          {/* Botones de acción - CON MEJORAS MÓVILES */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-6 pb-12 sm:pb-0 border-t border-gray-200">
             <Button type="submit" className="flex-1" disabled={loading}>
               {loading
                 ? 'Guardando...'
@@ -791,7 +660,6 @@ const PetForm: React.FC<PetFormProps> = ({
             </Button>
 
             {isEditMode ? (
-              // Si está editando → mostrar botón de cancelar normal
               <Button
                 type="button"
                 variant="outline"
@@ -803,11 +671,10 @@ const PetForm: React.FC<PetFormProps> = ({
                 Cancelar
               </Button>
             ) : (
-              // Si está creando → mostrar Link al dashboard
               <Link
                 to="/dashboard"
-                className="flex-1 px-4 py-2 border rounded-lg text-center border-gray-300 
-                 hover:bg-gray-100 transition"
+                className="flex-1 px-4 py-3 border rounded-lg text-center border-gray-300 
+                  hover:bg-gray-100 transition min-h-[48px] flex items-center justify-center"
               >
                 Cancelar
               </Link>
