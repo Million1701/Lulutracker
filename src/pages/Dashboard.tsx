@@ -28,7 +28,10 @@ const Dashboard = () => {
       if (!user) throw new Error('No autenticado');
 
       // Consultar mascotas del usuario
-      const { data, error } = await supabase.from('pets').select();
+      const { data, error } = await supabase
+        .from('pets')
+        .select('*')
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
