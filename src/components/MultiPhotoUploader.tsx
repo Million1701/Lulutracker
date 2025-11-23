@@ -1,7 +1,7 @@
 // components/MultiPhotoUploader.tsx
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Camera, Image as ImageIcon } from 'lucide-react';
 
 interface MultiPhotoUploaderProps {
   photos: string[]; // Array de URLs en base64
@@ -92,7 +92,7 @@ const MultiPhotoUploader: React.FC<MultiPhotoUploaderProps> = ({
   );
 
   // Configuración de react-dropzone
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: {
       'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
@@ -100,6 +100,8 @@ const MultiPhotoUploader: React.FC<MultiPhotoUploaderProps> = ({
     maxSize: maxSizeBytes,
     maxFiles: maxPhotos - photos.length,
     disabled: photos.length >= maxPhotos,
+    noClick: true, // ⬅️ IMPORTANTE: Deshabilitar click automático
+    noKeyboard: true,
   });
 
   // Eliminar foto
@@ -107,6 +109,28 @@ const MultiPhotoUploader: React.FC<MultiPhotoUploaderProps> = ({
     const updatedPhotos = photos.filter((_, index) => index !== indexToRemove);
     onPhotosChange(updatedPhotos);
     if (onError) onError('');
+  };
+
+  // Handler para abrir galería
+  const handleGalleryClick = () => {
+    open(); // Abre el selector de archivos normal
+  };
+
+  // Handler para abrir cámara (solo móvil)
+  const handleCameraClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment'; // ⬅️ Fuerza abrir cámara
+    input.multiple = true;
+    input.onchange = async (e: any) => {
+      const files = Array.from(e.target.files || []) as File[];
+      if (files.length > 0) {
+        // Usar el mismo handler de onDrop
+        await onDrop(files, []);
+      }
+    };
+    input.click();
   };
 
   return (
@@ -137,35 +161,66 @@ const MultiPhotoUploader: React.FC<MultiPhotoUploaderProps> = ({
         </div>
       )}
 
-      {/* Área de drop */}
+      {/* Área de drop - SIN capture */}
       {photos.length < maxPhotos && (
-        <div
-          {...getRootProps()}
-          className={`
-            cursor-pointer rounded-lg border-2 border-dashed p-8 text-center 
-            transition-all duration-200
-            ${
-              isDragActive
-                ? 'border-blue-500 bg-blue-50 scale-[1.02]'
-                : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50/50'
-            }
-            ${photos.length >= maxPhotos ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
-          <input {...getInputProps()} capture="environment" />
-          <Plus
-            className={`mx-auto mb-2 h-8 w-8 transition-colors ${
-              isDragActive ? 'text-blue-500' : 'text-gray-400'
-            }`}
-          />
-          <p className="text-sm font-medium text-gray-700 mb-1">
-            {isDragActive
-              ? '¡Suelta las fotos aquí!'
-              : 'Arrastra fotos o haz clic para seleccionar'}
-          </p>
-          <p className="text-xs text-gray-500">
-            {photos.length}/{maxPhotos} fotos • Máx {maxSizeMB}MB cada una
-          </p>
+        <div>
+          {/* Zona de drag & drop */}
+          <div
+            {...getRootProps()}
+            className={`
+              rounded-lg border-2 border-dashed p-6 text-center 
+              transition-all duration-200
+              ${
+                isDragActive
+                  ? 'border-blue-500 bg-blue-50 scale-[1.02]'
+                  : 'border-gray-300'
+              }
+              ${photos.length >= maxPhotos ? 'opacity-50 cursor-not-allowed' : ''}
+            `}
+          >
+            <input {...getInputProps()} /> {/* ⬅️ SIN capture */}
+            <Plus
+              className={`mx-auto mb-3 h-10 w-10 transition-colors ${
+                isDragActive ? 'text-blue-500' : 'text-gray-400'
+              }`}
+            />
+            <p className="text-sm font-medium text-gray-700 mb-1">
+              {isDragActive
+                ? '¡Suelta las fotos aquí!'
+                : 'Arrastra fotos aquí o selecciona desde abajo'}
+            </p>
+            <p className="text-xs text-gray-500 mb-4">
+              {photos.length}/{maxPhotos} fotos • Máx {maxSizeMB}MB cada una
+            </p>
+            {/* Botones de selección */}
+            <div className="flex gap-3 justify-center">
+              {/* Botón Galería */}
+              <button
+                type="button"
+                onClick={handleGalleryClick}
+                disabled={photos.length >= maxPhotos}
+                className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white 
+                  rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 
+                  disabled:cursor-not-allowed font-medium text-sm shadow-sm"
+              >
+                <ImageIcon className="h-4 w-4" />
+                Galería
+              </button>
+
+              {/* Botón Cámara (solo móvil) */}
+              <button
+                type="button"
+                onClick={handleCameraClick}
+                disabled={photos.length >= maxPhotos}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 text-white 
+                  rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 
+                  disabled:cursor-not-allowed font-medium text-sm shadow-sm sm:hidden"
+              >
+                <Camera className="h-4 w-4" />
+                Cámara
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
