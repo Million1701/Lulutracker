@@ -22,15 +22,19 @@ const Dashboard = () => {
 
       // Obtener usuario actual
       const {
-        data: { user },
-      } = await supabase.auth.getUser();
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const user = session?.user;
 
       if (!user) throw new Error('No autenticado');
 
       // Consultar mascotas del usuario
       const { data, error } = await supabase
         .from('pets')
-        .select('*')
+        .select(
+          'id, user_id, qr_code, name, species, breed, color, size, birth_date, description, personality, allergies, medications, diseases, care_recommendations, emergency_phone, emergency_email, general_location, recovery_instructions, photo_1_url, extra_photos, instagram, facebook, tiktok, other_links, is_active'
+        )
         .eq('user_id', user.id);
 
       if (error) throw error;
