@@ -12,7 +12,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
 
-  console.log(user);
+  localStorage.setItem('user', JSON.stringify(user?.id));
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

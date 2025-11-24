@@ -20,22 +20,15 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      // Obtener usuario actual
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      const user = session?.user;
+      const user = localStorage.getItem('user');
 
       if (!user) throw new Error('No autenticado');
 
       // Consultar mascotas del usuario
       const { data, error } = await supabase
         .from('pets')
-        .select(
-          'id, user_id, qr_code, name, species, breed, color, size, birth_date, description, personality, allergies, medications, diseases, care_recommendations, emergency_phone, emergency_email, general_location, recovery_instructions, photo_1_url, extra_photos, instagram, facebook, tiktok, other_links, is_active'
-        )
-        .eq('user_id', user.id);
+        .select('*')
+        .eq('user_id', user.split('"')[1]);
 
       if (error) throw error;
 
@@ -53,7 +46,7 @@ const Dashboard = () => {
         <LoadingScreen />
       ) : (
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="mb-8 flex items-center justify-between">
+          <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Mis Mascotas</h1>
               <p className="mt-2 text-gray-600">
@@ -87,7 +80,7 @@ const Dashboard = () => {
                 </Link>
               </div>
             ) : (
-              pets.map((p) => <PetCard pet={p} />)
+              pets.map((p) => <PetCard key={p.id} pet={p} />)
             )}
           </Card>
         </div>
