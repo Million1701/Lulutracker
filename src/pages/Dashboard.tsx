@@ -16,19 +16,28 @@ const Dashboard = () => {
     fetchPets();
   }, []); // Se ejecuta al montar el componente
 
+  useEffect(() => {
+    fetchPets();
+  }, []);
+
   const fetchPets = async () => {
     try {
       setLoading(true);
 
-      const user = localStorage.getItem('user');
+      // 1. Sesión rápida (mobile friendly)
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const user = session?.user;
 
       if (!user) throw new Error('No autenticado');
 
-      // Consultar mascotas del usuario
+      // 3. Consulta
       const { data, error } = await supabase
         .from('pets')
         .select('*')
-        .eq('user_id', user.split('"')[1]);
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
