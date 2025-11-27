@@ -9,6 +9,7 @@ export const petService = {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+
     return data || [];
   },
 
@@ -51,5 +52,7 @@ export const petService = {
     const { error } = await supabase.from('pets').delete().eq('id', id);
 
     if (error) throw error;
+
+    location.reload();
   },
 };

@@ -24,7 +24,10 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
+          <Link
+            to={`${user ? '/dashboard' : '/'}`}
+            className="flex items-center space-x-2"
+          >
             <img src={logoLulu} alt="Lulu" className="w-10 h-10 invert" />
           </Link>
 
@@ -43,12 +46,6 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="hidden items-center space-x-8 md:flex">
-              <Link
-                to="/"
-                className="text-gray-700 transition-colors hover:text-blue-600"
-              >
-                Inicio
-              </Link>
               <Link to="/login">
                 <Button size="sm">Mis mascotas</Button>
               </Link>
@@ -84,20 +81,11 @@ const Navbar = () => {
                   </Button>
                 </>
               ) : (
-                <>
-                  <Link
-                    to="/"
-                    className="text-gray-700 transition-colors hover:text-blue-600"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Inicio
-                  </Link>
-                  <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button size="sm" className="w-full">
-                      Mis mascotas
-                    </Button>
-                  </Link>
-                </>
+                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Button size="sm" className="w-full">
+                    Mis mascotas
+                  </Button>
+                </Link>
               )}
             </div>
           </div>

@@ -5,6 +5,7 @@ import Button from '../components/ui/Button';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { PetFormData } from '../types';
+import { LoadingScreen } from '../components/LoadingScreen';
 
 const PetProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,11 +32,7 @@ const PetProfile = () => {
   }, [id]);
 
   if (!pet) {
-    return (
-      <div className="mx-auto max-w-4xl px-4 py-12 text-center">
-        <p className="text-gray-600">Cargando información de la mascota...</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // Calcular edad desde birth_date
