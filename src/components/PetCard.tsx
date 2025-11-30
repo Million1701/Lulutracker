@@ -36,13 +36,17 @@ const PetCard = ({ pet }: PetCardProps) => {
       >
         {/* Imagen de fondo con degradado */}
         <div className="absolute inset-0">
-          <img
-            src={
-              'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=800&q=80'
-            }
-            alt={pet.name}
-            className="w-full h-full object-cover"
-          />
+          {pet.photo_1_url ? (
+            <img
+              src={pet.photo_1_url}
+              alt={pet.name}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-200 to-purple-200 text-8xl">
+              🐾
+            </div>
+          )}
           {/* Degradado oscuro para legibilidad del texto */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
           {/* Degradado adicional en la parte inferior */}

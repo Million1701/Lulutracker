@@ -1,7 +1,5 @@
 import { useParams } from 'react-router-dom';
 import { MapPin, Phone, Mail } from 'lucide-react';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { PetFormData } from '../types';

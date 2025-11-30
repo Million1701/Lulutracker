@@ -1,6 +1,6 @@
 import { PET_SIZES, PET_SPECIES } from "../utils/constants";
 
-type PetSpecies = (typeof PET_SPECIES)[number];
+export type PetSpecies = (typeof PET_SPECIES)[number];
 type PetSize = (typeof PET_SIZES)[number];
 
 export interface OtherLink {
