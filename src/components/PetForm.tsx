@@ -538,7 +538,6 @@ const PetForm: React.FC<PetFormProps> = ({
         const updatedData = await updatePet(actualPetId!, dataToSubmit);
 
         if (updatedData) {
-          alert('Mascota actualizada exitosamente');
           navigate(`/pet/${updatedData.qr_code}`);
         }
       } else {

@@ -21,8 +21,6 @@ const PetProfile = () => {
         console.error(error);
         return;
       }
-
-      console.log(data);
       setPet(data);
     };
 

@@ -25,7 +25,6 @@ export const petService = {
   },
 
   async createPet(pet: Partial<PetFormData>): Promise<PetFormData> {
-    console.log(pet)
     const { data, error } = await supabase
       .from('pets')
       .insert([pet])
