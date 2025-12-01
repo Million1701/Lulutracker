@@ -121,6 +121,19 @@ const PetProfile = () => {
         )}
 
         <div className="space-y-4">
+          {/* Instrucciones de recuperación */}
+          {pet.recovery_instructions && (
+            <div className="rounded-3xl bg-gradient-to-r from-red-500 to-pink-500 p-6 text-white shadow-lg">
+              <div className="mb-3 text-3xl">🚨</div>
+              <h2 className="mb-3 text-xl font-bold">
+                ¡Me perdí! Por favor ayúdame
+              </h2>
+              <p className="leading-relaxed whitespace-pre-line">
+                {pet.recovery_instructions}
+              </p>
+            </div>
+          )}
+
           {/* Descripción */}
           {pet.description && (
             <div className="rounded-3xl bg-white p-6 shadow-lg">
@@ -136,12 +149,20 @@ const PetProfile = () => {
           {pet.personality && (
             <div className="rounded-3xl bg-white p-6 shadow-lg">
               <div className="mb-3 text-2xl">💫</div>
-              <h2 className="mb-3 text-xl font-bold text-gray-900">
+              <h2 className="mb-4 text-xl font-bold text-gray-900">
                 Mi personalidad
               </h2>
-              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {pet.personality}
-              </p>
+
+              <div className="flex flex-wrap gap-2">
+                {pet.personality.split(',').map((trait, index) => (
+                  <span
+                    key={index}
+                    className="px-4 py-3 bg-gray-100 text-gray-800 rounded-full text-sm font-medium border border-gray-200"
+                  >
+                    {trait.trim()}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
@@ -197,19 +218,6 @@ const PetProfile = () => {
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {/* Instrucciones de recuperación */}
-          {pet.recovery_instructions && (
-            <div className="rounded-3xl bg-gradient-to-r from-red-500 to-pink-500 p-6 text-white shadow-lg">
-              <div className="mb-3 text-3xl">🚨</div>
-              <h2 className="mb-3 text-xl font-bold">
-                ¡Me perdí! Por favor ayúdame
-              </h2>
-              <p className="leading-relaxed whitespace-pre-line">
-                {pet.recovery_instructions}
-              </p>
             </div>
           )}
 

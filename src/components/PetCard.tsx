@@ -106,32 +106,18 @@ const PetCard = ({ pet }: PetCardProps) => {
               {isMenuOpen && (
                 <div className="absolute right-0 top-[-110px] mt-2 w-40 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-10">
                   <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-blue-50 transition-colors"
+                    className="text-sm font-medium flex w-full gap-2 items-center py-3 px-3 hover:bg-blue-50 text-blue-600"
+                    onClick={() => setIsEditMenu(true)}
                   >
                     <Edit2 className="h-4 w-4 text-blue-600" />
-                    <button
-                      className="text-sm font-medium"
-                      onClick={() => setIsEditMenu(true)}
-                    >
-                      Editar
-                    </button>
+                    Editar
                   </button>
                   <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-red-50 transition-colors"
+                    onClick={() => setIsDeletePet(true)}
+                    className="text-sm font-medium flex w-full gap-2 items-center py-3 px-3 hover:bg-red-50 text-red-600"
                   >
                     <Trash2 className="h-4 w-4 text-red-600" />
-                    <button
-                      onClick={() => setIsDeletePet(true)}
-                      className="text-sm font-medium"
-                    >
-                      Eliminar
-                    </button>
+                    Eliminar
                   </button>
                 </div>
               )}
