@@ -575,8 +575,8 @@ const PetForm: React.FC<PetFormProps> = ({
   ];
 
   return (
-    <div className="max-w-2xl mx-auto w-full h-full sm:h-fit sm:max-h-[800px] overflow-auto my-8">
-      <Card className="p-4 sm:p-8 rounded-none sm:rounded-lg pb-24 sm:pb-8 sm:bg-white">
+    <div className="max-w-2xl mx-auto w-full h-full sm:h-fit sm:max-h-[800px] overflow-auto my-0 sm:my-8">
+      <Card className="p-4 sm:p-8 rounded-none sm:rounded-lg pb-24 sm:pb-8 sm:bg-white sm:border sm:border-gray-200">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           {isEditMode ? 'Editar mascota' : 'Registra tu mascota'}
         </h2>
