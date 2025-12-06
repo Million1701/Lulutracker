@@ -37,7 +37,7 @@ const Footer = () => {
               </h4>
               <div className="flex gap-3">
                 <a
-                  href="https://tiktok.com/@lulutracker"
+                  href="https://www.tiktok.com/@lulubrand83"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-gray-600 transition-colors hover:bg-black hover:text-white"
@@ -52,7 +52,7 @@ const Footer = () => {
                   </svg>
                 </a>
                 <a
-                  href="https://instagram.com/lulutracker"
+                  href="https://www.instagram.com/lulu.brandco/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-gray-600 transition-colors hover:bg-pink-600 hover:text-white"
@@ -110,20 +110,20 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               <li>
-                <Link
-                  to="/como-funciona"
+                <a
+                  href="#como_funciona"
                   className="text-sm text-gray-600 transition-colors hover:text-blue-600"
                 >
                   ¿Cómo Funciona?
-                </Link>
+                </a>
               </li>
               <li>
-                <Link
-                  to="/preguntas-frecuentes"
+                <a
+                  href="#preguntas_frecuentes"
                   className="text-sm text-gray-600 transition-colors hover:text-blue-600"
                 >
                   Preguntas Frecuentes
-                </Link>
+                </a>
               </li>
               <li>
                 <a
@@ -182,24 +182,24 @@ const Footer = () => {
               nuestras mascotas © {currentYear} Lulutracker
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-              <Link
-                to="/privacidad"
+              <a
+                href="https://lulutracker.myshopify.com/policies/privacy-policy"
                 className="text-sm text-gray-600 transition-colors hover:text-blue-600"
               >
                 Privacidad
-              </Link>
-              <Link
-                to="/terminos"
+              </a>
+              <a
+                href="https://lulutracker.myshopify.com/policies/terms-of-service"
                 className="text-sm text-gray-600 transition-colors hover:text-blue-600"
               >
                 Términos
-              </Link>
-              <Link
-                to="/cookies"
+              </a>
+              <a
+                href="https://lulutracker.myshopify.com/policies/shipping-policy"
                 className="text-sm text-gray-600 transition-colors hover:text-blue-600"
               >
-                Cookies
-              </Link>
+                Envios
+              </a>
             </div>
           </div>
         </div>

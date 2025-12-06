@@ -8,12 +8,68 @@ import {
   AlertCircle,
   ShoppingCart,
   ExternalLink,
+  ChevronDown,
+  HelpCircle,
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import { useState } from 'react';
+
+const faqs = [
+  {
+    question: '¿Cómo registro a mi mascota?',
+    isStepByStep: true,
+    steps: [
+      { number: 1, text: 'Crea tu cuenta gratis en nuestra plataforma' },
+      {
+        number: 2,
+        text: 'Completa el perfil de tu mascota con foto, nombre, información médica y tus datos de contacto',
+      },
+      { number: 3, text: 'Descarga el código QR generado' },
+      {
+        number: 4,
+        text: 'Compra tu correa en nuestra tienda: ',
+        hasLink: true,
+        linkText: 'lulutracker',
+        linkUrl: 'https://lulutracker.myshopify.com/',
+      },
+    ],
+    finalText: '¡Listo! Tu mascota estará protegida en minutos.',
+  },
+  {
+    question: '¿Qué pasa cuando alguien encuentra a mi mascota?',
+    answer:
+      'Cuando alguien escanea el código QR de la placa, verá instantáneamente la información de tu mascota y tus datos de contacto.',
+  },
+  {
+    question: '¿Puedo actualizar la información de mi mascota?',
+    answer:
+      '¡Absolutamente! Una de las grandes ventajas de Lulutracker es que puedes actualizar toda la información en cualquier momento desde tu cuenta: cambiar número de teléfono, agregar información médica, actualizar foto, etc. Los cambios son instantáneos sin necesidad de reemplazar la placa.',
+  },
+  {
+    question: '¿La placa es resistente al agua y duración?',
+    answer:
+      'Sí, nuestras placas están diseñadas para resistir el uso diario de tu mascota. Son impermeables, resistentes a rasguños y fabricadas con materiales duraderos de alta calidad. Están hechas para durar años, incluso con mascotas muy activas.',
+  },
+  {
+    question: '¿Puedo usar una placa para varias mascotas?',
+    answer:
+      'Cada placa está diseñada para una mascota individual, ya que cada código QR es único y lleva a un perfil específico. Sin embargo, puedes tener múltiples mascotas registradas en tu misma cuenta, cada una con su propia placa.',
+  },
+  {
+    question: '¿Esta segura mi información?',
+    answer:
+      'Totalmente. Tus datos están protegidos y encriptados. Tú decides qué información mostrar públicamente cuando alguien escanea el QR. Los datos sensibles como tu dirección exacta nunca se muestran, solo la información de contacto que tú autorices.',
+  },
+];
 
 const Home = () => {
+  const [openIndex, setOpenIndex] = useState(null as number | null);
   const SHOP_URL = 'https://lulutracker.myshopify.com/';
+
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
     <div>
@@ -43,7 +99,7 @@ const Home = () => {
               </a>
               <Link to="/dashboard">
                 <Button size="lg" variant="outline">
-                  Ver Demo del Perfil
+                  Ver tu Perfil
                 </Button>
               </Link>
             </div>
@@ -116,7 +172,7 @@ const Home = () => {
       </section>
 
       {/* How it Works */}
-      <section className="bg-gray-50 py-20">
+      <section className="bg-gray-50 py-20" id="como_funciona">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="mb-4 text-center text-4xl font-bold text-gray-900">
             ¿Cómo funciona?
@@ -315,6 +371,107 @@ const Home = () => {
           </a>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <div
+        className="mx-auto max-w-4xl px-4 sm:px-6 py-16 lg:px-8"
+        id="preguntas_frecuentes"
+      >
+        <div>
+          <div className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h1 className="mb-4 text-center text-4xl font-bold text-gray-900">
+                Preguntas Frecuentes
+              </h1>
+              <p className="mb-12 text-center text-lg text-gray-600">
+                Todo lo que necesitas saber sobre Lulutracker y cómo proteger a
+                tu mascota
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md"
+              >
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="flex w-full items-center justify-between px-6 py-5 text-left transition-colors hover:bg-gray-50"
+                >
+                  <span className="pr-4 text-lg font-semibold text-gray-900">
+                    {faq.question}
+                  </span>
+                  <ChevronDown
+                    className={`h-5 w-5 flex-shrink-0 text-blue-600 transition-transform ${
+                      openIndex === index ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    openIndex === index ? 'max-h-96' : 'max-h-0'
+                  }`}
+                >
+                  <div className="border-t border-gray-100 px-6 py-5">
+                    {faq.isStepByStep ? (
+                      <div className="space-y-4">
+                        <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                          Es muy simple:
+                        </p>
+                        {faq.steps.map((step, stepIndex) => (
+                          <div key={stepIndex} className="flex gap-4">
+                            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
+                              {step.number}
+                            </div>
+                            <p className="flex-1 pt-1 text-gray-600 leading-relaxed">
+                              {step.text}
+                              {step.hasLink && (
+                                <a
+                                  href={step.linkUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-700 underline font-medium"
+                                >
+                                  {step.linkText}
+                                </a>
+                              )}
+                            </p>
+                          </div>
+                        ))}
+                        {faq.finalText && (
+                          <p className="mt-4 text-gray-700 font-medium">
+                            {faq.finalText}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 leading-relaxed">
+                        {faq.answer}
+                        {faq.hasLink && (
+                          <a
+                            href={faq.linkUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-700 underline font-medium"
+                          >
+                            {faq.linkText}
+                          </a>
+                        )}
+                        {faq.hasLink &&
+                          '. ¡Listo! Tu mascota estará protegida en minutos.'}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* CTA Final */}
       <section className="bg-white py-20">
