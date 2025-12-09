@@ -76,7 +76,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
+          <div className="text-center animate-slideUp">
             <div className="mb-4 inline-block rounded-full bg-blue-100 dark:bg-blue-900 px-4 py-2 text-sm font-semibold text-blue-700 dark:text-blue-300">
               🐾 Collar Inteligente con QR
             </div>
@@ -113,7 +113,7 @@ const Home = () => {
       {/* Product Explanation */}
       <section className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-16">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
+          <div className="text-center animate-fadeIn">
             <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
               ¿Qué incluye tu Collar LuluTracker?
             </h2>
@@ -122,7 +122,7 @@ const Home = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2">
-            <Card className="border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-8">
+            <Card className="border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-8 animate-slideInLeft animation-fill-both">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500">
                   <QrCode className="h-6 w-6 text-white" />
@@ -144,7 +144,7 @@ const Home = () => {
               </a>
             </Card>
 
-            <Card className="border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 p-8">
+            <Card className="border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 p-8 animate-slideInRight animation-fill-both animation-delay-200">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600 dark:bg-green-500">
                   <Smartphone className="h-6 w-6 text-white" />
@@ -174,14 +174,16 @@ const Home = () => {
       {/* How it Works */}
       <section className="bg-gray-50 dark:bg-gray-800 py-20" id="como_funciona">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-4 text-center text-4xl font-bold text-gray-900 dark:text-gray-100">
-            ¿Cómo funciona?
-          </h2>
-          <p className="mb-12 text-center text-lg text-gray-600 dark:text-gray-300">
-            Tan simple como en tres pasos
-          </p>
+          <div className="animate-fadeIn">
+            <h2 className="mb-4 text-center text-4xl font-bold text-gray-900 dark:text-gray-100">
+              ¿Cómo funciona?
+            </h2>
+            <p className="mb-12 text-center text-lg text-gray-600 dark:text-gray-300">
+              Tan simple como en tres pasos
+            </p>
+          </div>
           <div className="grid gap-8 md:grid-cols-3">
-            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center">
+            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center animate-slideUp animation-fill-both">
               <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-lg font-bold text-white">
                 1
               </div>
@@ -205,7 +207,7 @@ const Home = () => {
               </a>
             </Card>
 
-            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center">
+            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center animate-slideUp animation-fill-both animation-delay-200">
               <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-lg font-bold text-white">
                 2
               </div>
@@ -227,7 +229,7 @@ const Home = () => {
               </Link>
             </Card>
 
-            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center">
+            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center animate-slideUp animation-fill-both animation-delay-400">
               <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-lg font-bold text-white">
                 3
               </div>
@@ -249,14 +251,16 @@ const Home = () => {
       {/* Traditional vs LuluTracker */}
       <section className="py-20 bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <h2 className="mb-4 text-center text-4xl font-bold text-gray-900 dark:text-gray-100">
-            Placas tradicionales vs LuluTracker
-          </h2>
-          <p className="mb-12 text-center text-lg text-gray-600 dark:text-gray-300">
-            El futuro de la identificación de mascotas
-          </p>
+          <div className="animate-fadeIn">
+            <h2 className="mb-4 text-center text-4xl font-bold text-gray-900 dark:text-gray-100">
+              Placas tradicionales vs LuluTracker
+            </h2>
+            <p className="mb-12 text-center text-lg text-gray-600 dark:text-gray-300">
+              El futuro de la identificación de mascotas
+            </p>
+          </div>
           <div className="grid gap-8 md:grid-cols-2">
-            <Card className="border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 p-8">
+            <Card className="border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 p-8 animate-slideInLeft animation-fill-both">
               <div className="mb-6 flex items-center gap-3">
                 <AlertCircle className="h-8 w-8 text-gray-600 dark:text-gray-400" />
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -295,7 +299,7 @@ const Home = () => {
               </ul>
             </Card>
 
-            <Card className="border-2 border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-950/30 p-8">
+            <Card className="border-2 border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-950/30 p-8 animate-slideInRight animation-fill-both animation-delay-200">
               <div className="mb-6 flex items-center gap-3">
                 <CheckCircle className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -349,7 +353,7 @@ const Home = () => {
 
       {/* Mission */}
       <section className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 py-20 text-white">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8 animate-scaleIn">
           <Heart className="mx-auto mb-6 h-16 w-16" />
           <h2 className="mb-6 text-4xl font-bold">Nuestra Misión</h2>
           <p className="mb-8 text-xl text-blue-100 dark:text-blue-200">
@@ -373,25 +377,18 @@ const Home = () => {
       </section>
 
       {/* FAQ Section */}
-      <div
-        className="mx-auto max-w-4xl px-4 sm:px-6 py-16 lg:px-8 bg-white dark:bg-gray-900"
-        id="preguntas_frecuentes"
-      >
-        <div>
-          <div className="mx-auto max-w-7xl px-4 pb-6 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="mb-4 text-center text-4xl font-bold text-gray-900 dark:text-gray-100">
-                Preguntas Frecuentes
-              </h1>
-              <p className="mb-12 text-center text-lg text-gray-600 dark:text-gray-300">
-                Todo lo que necesitas saber sobre Lulutracker y cómo proteger a
-                tu mascota
-              </p>
-            </div>
-          </div>
-        </div>
-
+      <section className="bg-white dark:bg-gray-900 py-16" id="preguntas_frecuentes">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 animate-fadeIn">
+            <h2 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
+              Preguntas Frecuentes
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Todo lo que necesitas saber sobre Lulutracker y cómo proteger a
+              tu mascota
+            </p>
+          </div>
+
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <div
@@ -471,11 +468,11 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       {/* CTA Final */}
       <section className="bg-white dark:bg-gray-900 py-20">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8 animate-slideUp">
           <Smartphone className="mx-auto mb-6 h-16 w-16 text-blue-600 dark:text-blue-400" />
           <h2 className="mb-6 text-4xl font-bold text-gray-900 dark:text-gray-100">
             Tecnología simple, tranquilidad infinita
