@@ -6,16 +6,16 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-gray-200 bg-gray-50">
+    <footer className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
       {/* Main Footer Content */}
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center space-x-2">
-              <img src={logoLulu} alt="Lulu" className="h-16 w-16 invert" />
+              <img src={logoLulu} alt="Lulu" className="h-16 w-16 invert dark:invert-0" />
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-gray-600">
+            <p className="mt-4 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
               La forma más segura y moderna de proteger a tu mascota con
               tecnología QR.
             </p>
@@ -24,7 +24,7 @@ const Footer = () => {
                 href="https://lulutracker.myshopify.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 transition-colors hover:text-blue-700"
+                className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 transition-colors hover:text-blue-700 dark:hover:text-blue-300"
               >
                 <ShoppingBag className="h-4 w-4" />
                 Visitar Tienda
@@ -32,7 +32,7 @@ const Footer = () => {
             </div>
             {/* Social Media Links */}
             <div className="mt-6">
-              <h4 className="mb-3 text-sm font-semibold text-gray-900">
+              <h4 className="mb-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
                 Síguenos
               </h4>
               <div className="flex gap-3">
@@ -40,7 +40,7 @@ const Footer = () => {
                   href="https://www.tiktok.com/@lulubrand83"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-gray-600 transition-colors hover:bg-black hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors hover:bg-black hover:text-white dark:hover:bg-black"
                   aria-label="TikTok"
                 >
                   <svg
@@ -55,7 +55,7 @@ const Footer = () => {
                   href="https://www.instagram.com/lulu.brandco/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-gray-600 transition-colors hover:bg-pink-600 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors hover:bg-pink-600 hover:text-white dark:hover:bg-pink-600"
                   aria-label="Instagram"
                 >
                   <svg
@@ -72,14 +72,14 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-gray-100">
               Navegación
             </h3>
             <ul className="space-y-3">
               <li>
                 <Link
                   to="/"
-                  className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                  className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   Inicio
                 </Link>
@@ -87,7 +87,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/dashboard"
-                  className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                  className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   Mis Mascotas
                 </Link>
@@ -95,7 +95,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/login"
-                  className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                  className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   Iniciar Sesión
                 </Link>
@@ -105,14 +105,14 @@ const Footer = () => {
 
           {/* Resources */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-gray-100">
               Recursos
             </h3>
             <ul className="space-y-3">
               <li>
                 <a
                   href="#como_funciona"
-                  className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                  className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   ¿Cómo Funciona?
                 </a>
@@ -120,7 +120,7 @@ const Footer = () => {
               <li>
                 <a
                   href="#preguntas_frecuentes"
-                  className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                  className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   Preguntas Frecuentes
                 </a>
@@ -130,7 +130,7 @@ const Footer = () => {
                   href="https://lulutracker.myshopify.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                  className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   Tienda Online
                 </a>
@@ -140,34 +140,34 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900">
+            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-900 dark:text-gray-100">
               Contacto
             </h3>
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
-                <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" />
+                <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400 dark:text-gray-500" />
                 <a
                   href="mailto:lulubrandco@gmail.com"
-                  className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                  className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
                 >
                   lulubrandco@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" />
-                <span className="text-sm text-gray-600">
+                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400 dark:text-gray-500" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Norte de Santander, Colombia
                 </span>
               </li>
             </ul>
             <div className="mt-6">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Horario de Atención
               </p>
-              <p className="mt-1 text-sm text-gray-600">
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Lunes a Viernes: 9:00 AM - 6:00 PM
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Sábados: 9:00 AM - 2:00 PM
               </p>
             </div>
@@ -175,28 +175,28 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 border-t border-gray-200 pt-8">
+        <div className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="flex items-center text-sm text-gray-600">
+            <p className="flex items-center text-sm text-gray-600 dark:text-gray-400">
               Hecho con <Heart className="mx-1 h-4 w-4 text-red-500" /> para
               nuestras mascotas © {currentYear} Lulutracker
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <a
                 href="https://lulutracker.myshopify.com/policies/privacy-policy"
-                className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
               >
                 Privacidad
               </a>
               <a
                 href="https://lulutracker.myshopify.com/policies/terms-of-service"
-                className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
               >
                 Términos
               </a>
               <a
                 href="https://lulutracker.myshopify.com/policies/shipping-policy"
-                className="text-sm text-gray-600 transition-colors hover:text-blue-600"
+                className="text-sm text-gray-600 dark:text-gray-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
               >
                 Envios
               </a>

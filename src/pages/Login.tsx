@@ -29,12 +29,12 @@ const Login = () => {
 
   return (
     <>
-      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12 bg-white dark:bg-gray-900">
         <Card className="w-full max-w-md p-8">
           <div className="mb-8 text-center">
-            <PawPrint className="mx-auto mb-4 h-12 w-12 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Bienvenido</h1>
-            <p className="mt-2 text-gray-600">Inicia sesión en tu cuenta</p>
+            <PawPrint className="mx-auto mb-4 h-12 w-12 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Bienvenido</h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">Inicia sesión en tu cuenta</p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSendCode}>
@@ -48,13 +48,13 @@ const Login = () => {
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
                 />
-                <span className="ml-2 text-sm text-gray-700">Recordarme</span>
+                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Recordarme</span>
               </label>
               <Link
                 to="/login"
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
               >
                 ¿Olvidaste tu correo?
               </Link>
@@ -71,16 +71,16 @@ const Login = () => {
 
       {isModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-xl p-6 w-[90%] max-w-sm shadow-lg relative">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-[90%] max-w-sm shadow-lg relative">
             {/* Botón X */}
             <button
               onClick={() => setIsModal(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
+              className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white text-xl"
             >
               <X className="h-6 w-6" />
             </button>
 
-            <p className="text-lg font-semibold text-center mb-4">
+            <p className="text-lg font-semibold text-center mb-4 text-gray-900 dark:text-gray-100">
               Se ha enviado un correo a{' '}
               <span className="font-bold">{email}</span>. Por favor, revisa tu
               bandeja de entrada para continuar.
