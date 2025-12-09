@@ -14,6 +14,7 @@ import {
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { useState } from 'react';
+import { useInView } from '../hooks/useInView';
 
 const faqs = [
   {
@@ -67,6 +68,14 @@ const Home = () => {
   const [openIndex, setOpenIndex] = useState(null as number | null);
   const SHOP_URL = 'https://lulutracker.myshopify.com/';
 
+  // useInView hooks for scroll animations
+  const productSection = useInView();
+  const howItWorksSection = useInView();
+  const comparisonSection = useInView();
+  const missionSection = useInView();
+  const faqSection = useInView();
+  const ctaSection = useInView();
+
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
@@ -111,9 +120,9 @@ const Home = () => {
       </section>
 
       {/* Product Explanation */}
-      <section className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-16">
+      <section ref={productSection.ref as any} className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 py-16">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center animate-fadeIn">
+          <div className={`text-center scroll-animate animate-fadeIn ${productSection.isInView ? 'is-visible' : ''}`}>
             <h2 className="mb-4 text-3xl font-bold text-gray-900 dark:text-gray-100">
               ¿Qué incluye tu Collar LuluTracker?
             </h2>
@@ -122,7 +131,7 @@ const Home = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2">
-            <Card className="border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-8 animate-slideInLeft animation-fill-both">
+            <Card className={`border-2 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-8 scroll-animate animate-slideInLeft ${productSection.isInView ? 'is-visible' : ''}`}>
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500">
                   <QrCode className="h-6 w-6 text-white" />
@@ -144,7 +153,7 @@ const Home = () => {
               </a>
             </Card>
 
-            <Card className="border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 p-8 animate-slideInRight animation-fill-both animation-delay-200">
+            <Card className={`border-2 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 p-8 scroll-animate animate-slideInRight animation-delay-200 ${productSection.isInView ? 'is-visible' : ''}`}>
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600 dark:bg-green-500">
                   <Smartphone className="h-6 w-6 text-white" />
@@ -172,9 +181,9 @@ const Home = () => {
       </section>
 
       {/* How it Works */}
-      <section className="bg-gray-50 dark:bg-gray-800 py-20" id="como_funciona">
+      <section ref={howItWorksSection.ref as any} className="bg-gray-50 dark:bg-gray-800 py-20" id="como_funciona">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="animate-fadeIn">
+          <div className={`scroll-animate animate-fadeIn ${howItWorksSection.isInView ? 'is-visible' : ''}`}>
             <h2 className="mb-4 text-center text-4xl font-bold text-gray-900 dark:text-gray-100">
               ¿Cómo funciona?
             </h2>
@@ -183,7 +192,7 @@ const Home = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">
-            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center animate-slideUp animation-fill-both">
+            <Card className={`relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center scroll-animate animate-slideUp ${howItWorksSection.isInView ? 'is-visible' : ''}`}>
               <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-lg font-bold text-white">
                 1
               </div>
@@ -207,7 +216,7 @@ const Home = () => {
               </a>
             </Card>
 
-            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center animate-slideUp animation-fill-both animation-delay-200">
+            <Card className={`relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center scroll-animate animate-slideUp animation-delay-200 ${howItWorksSection.isInView ? 'is-visible' : ''}`}>
               <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-lg font-bold text-white">
                 2
               </div>
@@ -229,7 +238,7 @@ const Home = () => {
               </Link>
             </Card>
 
-            <Card className="relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center animate-slideUp animation-fill-both animation-delay-400">
+            <Card className={`relative overflow-hidden bg-white dark:bg-gray-700 p-8 text-center scroll-animate animate-slideUp animation-delay-400 ${howItWorksSection.isInView ? 'is-visible' : ''}`}>
               <div className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500 text-lg font-bold text-white">
                 3
               </div>
@@ -249,9 +258,9 @@ const Home = () => {
       </section>
 
       {/* Traditional vs LuluTracker */}
-      <section className="py-20 bg-white dark:bg-gray-900">
+      <section ref={comparisonSection.ref as any} className="py-20 bg-white dark:bg-gray-900">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="animate-fadeIn">
+          <div className={`scroll-animate animate-fadeIn ${comparisonSection.isInView ? 'is-visible' : ''}`}>
             <h2 className="mb-4 text-center text-4xl font-bold text-gray-900 dark:text-gray-100">
               Placas tradicionales vs LuluTracker
             </h2>
@@ -260,7 +269,7 @@ const Home = () => {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2">
-            <Card className="border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 p-8 animate-slideInLeft animation-fill-both">
+            <Card className={`border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 p-8 scroll-animate animate-slideInLeft ${comparisonSection.isInView ? 'is-visible' : ''}`}>
               <div className="mb-6 flex items-center gap-3">
                 <AlertCircle className="h-8 w-8 text-gray-600 dark:text-gray-400" />
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -299,7 +308,7 @@ const Home = () => {
               </ul>
             </Card>
 
-            <Card className="border-2 border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-950/30 p-8 animate-slideInRight animation-fill-both animation-delay-200">
+            <Card className={`border-2 border-blue-500 dark:border-blue-600 bg-blue-50 dark:bg-blue-950/30 p-8 scroll-animate animate-slideInRight animation-delay-200 ${comparisonSection.isInView ? 'is-visible' : ''}`}>
               <div className="mb-6 flex items-center gap-3">
                 <CheckCircle className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -352,8 +361,8 @@ const Home = () => {
       </section>
 
       {/* Mission */}
-      <section className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 py-20 text-white">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8 animate-scaleIn">
+      <section ref={missionSection.ref as any} className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 py-20 text-white">
+        <div className={`mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8 scroll-animate animate-scaleIn ${missionSection.isInView ? 'is-visible' : ''}`}>
           <Heart className="mx-auto mb-6 h-16 w-16" />
           <h2 className="mb-6 text-4xl font-bold">Nuestra Misión</h2>
           <p className="mb-8 text-xl text-blue-100 dark:text-blue-200">
@@ -377,9 +386,9 @@ const Home = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="bg-white dark:bg-gray-900 py-16" id="preguntas_frecuentes">
+      <section ref={faqSection.ref as any} className="bg-white dark:bg-gray-900 py-16" id="preguntas_frecuentes">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 animate-fadeIn">
+          <div className={`text-center mb-12 scroll-animate animate-fadeIn ${faqSection.isInView ? 'is-visible' : ''}`}>
             <h2 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
               Preguntas Frecuentes
             </h2>
@@ -471,8 +480,8 @@ const Home = () => {
       </section>
 
       {/* CTA Final */}
-      <section className="bg-white dark:bg-gray-900 py-20">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8 animate-slideUp">
+      <section ref={ctaSection.ref as any} className="bg-white dark:bg-gray-900 py-20">
+        <div className={`mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8 scroll-animate animate-slideUp ${ctaSection.isInView ? 'is-visible' : ''}`}>
           <Smartphone className="mx-auto mb-6 h-16 w-16 text-blue-600 dark:text-blue-400" />
           <h2 className="mb-6 text-4xl font-bold text-gray-900 dark:text-gray-100">
             Tecnología simple, tranquilidad infinita

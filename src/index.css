@@ -63,24 +63,55 @@
     }
   }
 
-  .animate-fadeIn {
-    animation: fadeIn 0.6s ease-out;
+  /* Estados iniciales - invisible hasta que se active */
+  .scroll-animate {
+    opacity: 0;
   }
 
-  .animate-slideUp {
-    animation: slideUp 0.6s ease-out;
+  /* Animaciones que se activan con scroll */
+  .scroll-animate.is-visible {
+    animation-fill-mode: forwards;
   }
 
-  .animate-slideInLeft {
-    animation: slideInLeft 0.6s ease-out;
+  .scroll-animate.is-visible.animate-fadeIn {
+    animation: fadeIn 0.8s ease-out forwards;
   }
 
-  .animate-slideInRight {
-    animation: slideInRight 0.6s ease-out;
+  .scroll-animate.is-visible.animate-slideUp {
+    animation: slideUp 0.8s ease-out forwards;
   }
 
-  .animate-scaleIn {
-    animation: scaleIn 0.5s ease-out;
+  .scroll-animate.is-visible.animate-slideInLeft {
+    animation: slideInLeft 0.8s ease-out forwards;
+  }
+
+  .scroll-animate.is-visible.animate-slideInRight {
+    animation: slideInRight 0.8s ease-out forwards;
+  }
+
+  .scroll-animate.is-visible.animate-scaleIn {
+    animation: scaleIn 0.6s ease-out forwards;
+  }
+
+  /* Animaciones inmediatas (sin scroll) - para hero section */
+  .animate-fadeIn-immediate {
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .animate-slideUp-immediate {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  .animate-slideInLeft-immediate {
+    animation: slideInLeft 0.8s ease-out;
+  }
+
+  .animate-slideInRight-immediate {
+    animation: slideInRight 0.8s ease-out;
+  }
+
+  .animate-scaleIn-immediate {
+    animation: scaleIn 0.6s ease-out;
   }
 
   /* Delays para animaciones escalonadas */
