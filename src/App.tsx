@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import PetProfile from './pages/PetProfile';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import PetForm from './components/PetForm';
 import { useEffect } from 'react';
@@ -38,26 +39,28 @@ function App() {
   }, []);
 
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/dashboard/new-pet" element={<PetForm />} />
-              <Route
-                path="/dashboard/new-pet/qr_success"
-                element={<QRSuccess />}
-              />
-              <Route />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard/new-pet" element={<PetForm />} />
+                <Route
+                  path="/dashboard/new-pet/qr_success"
+                  element={<QRSuccess />}
+                />
+                <Route />
+              </Route>
+              <Route path="/pet/:id" element={<PetProfile />} />
             </Route>
-            <Route path="/pet/:id" element={<PetProfile />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
