@@ -50,25 +50,25 @@ const QRSuccess = () => {
 
   // 🔥 AHORA sí puedes hacer el return condicional DESPUÉS de los hooks
   if (!qr) {
-    return <p>Error: No se recibió el código QR.</p>;
+    return <p className="text-gray-900 dark:text-gray-100">Error: No se recibió el código QR.</p>;
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center gap-12 py-4">
+    <div className="bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center gap-12 py-4">
       <div className="w-full max-w-xl">
         {/* Card principal */}
-        <div className="sm:bg-white sm:rounded-2xl sm:shadow-xl p-8 space-y-6">
+        <div className="sm:bg-white sm:dark:bg-gray-800 sm:rounded-2xl sm:shadow-xl p-8 space-y-6">
           {/* Header con ícono de éxito */}
           <div className="text-center space-y-3">
             <div className="flex justify-center">
-              <div className="bg-green-100 rounded-full p-3">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="bg-green-100 dark:bg-green-900 rounded-full p-3">
+                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
               ¡QR Generado Exitosamente!
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Escanea este código o descárgalo para colocarlo en el collar de tu
               mascota
             </p>
@@ -76,8 +76,8 @@ const QRSuccess = () => {
 
           {/* Contenedor del QR */}
           <div className="flex justify-center">
-            <div className="bg-white p-4 rounded-xl border-2 border-gray-200 shadow-inner">
-              <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-700 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 shadow-inner">
+              <div className="w-48 h-48 bg-gray-100 dark:bg-gray-600 rounded-lg flex items-center justify-center">
                 <div ref={qrRef} />
               </div>
             </div>
@@ -93,8 +93,8 @@ const QRSuccess = () => {
           </Button>
 
           {/* Información adicional */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800 text-center">
+          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p className="text-sm text-blue-800 dark:text-blue-300 text-center">
               💡 <span className="font-semibold">Nota:</span> Descargue el
               código QR y envíelo por WhatsApp al agente encargado, pues es
               necesario para la personalización de su correa.
@@ -103,7 +103,7 @@ const QRSuccess = () => {
         </div>
 
         {/* Nota inferior */}
-        <p className="text-center text-sm text-gray-500 mt-4">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
           Guarda este código en un lugar seguro
         </p>
       </div>
