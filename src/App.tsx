@@ -11,6 +11,7 @@ import PetForm from './components/PetForm';
 import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import QRSuccess from './pages/QRSuccess';
+import LocationReportsDashboard from './pages/LocationReportsDashboard';
 
 function App() {
   useEffect(() => {
@@ -53,7 +54,7 @@ function App() {
                   path="/dashboard/new-pet/qr_success"
                   element={<QRSuccess />}
                 />
-                <Route />
+                <Route path="/location-reports" element={<LocationReportsDashboard />} />
               </Route>
               <Route path="/pet/:id" element={<PetProfile />} />
             </Route>

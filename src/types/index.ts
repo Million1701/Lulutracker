@@ -47,6 +47,9 @@ export interface PetFormData {
   other_links: OtherLink[];
 
   is_active: boolean | null;
+
+  // Estado de la mascota (para sistema de localización)
+  status?: PetStatus;
 }
 
 export interface PhotoPreviews {
@@ -73,4 +76,53 @@ export interface User {
   full_name?: string;
   phone?: string;
   created_at: string;
+}
+
+// ==========================================
+// Location Tracking Types
+// ==========================================
+
+export type PetStatus = 'normal' | 'lost' | 'found';
+export type LocationReportStatus = 'pending' | 'verified' | 'dismissed';
+
+export interface LocationCoordinates {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+}
+
+export interface LocationReport {
+  id: string;
+  pet_id: string;
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+  address?: string;
+  reported_at: string;
+  status: LocationReportStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateLocationReportData {
+  pet_id: string;
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+  address?: string;
+}
+
+export interface GeocodeResult {
+  display_name: string;
+  lat: string;
+  lon: string;
+  address?: {
+    road?: string;
+    house_number?: string;
+    suburb?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    postcode?: string;
+  };
 }

@@ -1,14 +1,59 @@
-import { useParams } from 'react-router-dom';
-import { MapPin, Phone, Mail } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { MapPin, Phone, Mail, AlertCircle, CheckCircle, Navigation } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { PetFormData } from '../types';
+import { PetFormData, PetStatus } from '../types';
 import { LoadingScreen } from '../components/LoadingScreen';
+import { useLocation } from '../hooks/useLocation';
+import { locationReportService, petStatusService } from '../services/locationReportService';
+import { locationService } from '../services/locationService';
+import Button from '../components/ui/Button';
 
 const PetProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [pet, setPet] = useState<PetFormData | null>(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isCheckingOwnership, setIsCheckingOwnership] = useState(true);
+  const [reportSent, setReportSent] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
+  const {
+    coordinates,
+    address,
+    isLoading: locationLoading,
+    error: locationError,
+    getCurrentLocation,
+    isSupported,
+  } = useLocation();
+
+  // Verificar si el usuario actual es el dueño
+  useEffect(() => {
+    const checkOwnership = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user && pet && pet.user_id === user.id) {
+          setIsOwner(true);
+        } else {
+          setIsOwner(false);
+        }
+      } catch (error) {
+        console.error('Error verificando propiedad:', error);
+        setIsOwner(false);
+      } finally {
+        setIsCheckingOwnership(false);
+      }
+    };
+
+    if (pet) {
+      checkOwnership();
+    }
+  }, [pet]);
+
+  // Fetch pet data
   useEffect(() => {
     const fetchPet = async () => {
       const { data, error } = await supabase
@@ -27,9 +72,86 @@ const PetProfile = () => {
     fetchPet();
   }, [id]);
 
-  if (!pet) {
-    return <LoadingScreen />;
-  }
+  // Solicitar ubicación automáticamente si la mascota está perdida y NO es el dueño
+  useEffect(() => {
+    const requestLocationAutomatically = async () => {
+      if (
+        !isCheckingOwnership &&
+        !isOwner &&
+        pet?.status === 'lost' &&
+        !reportSent &&
+        !coordinates &&
+        isSupported
+      ) {
+        // Solicitar ubicación automáticamente
+        try {
+          await getCurrentLocation();
+        } catch (error) {
+          console.error('Error al solicitar ubicación automática:', error);
+        }
+      }
+    };
+
+    requestLocationAutomatically();
+  }, [
+    isCheckingOwnership,
+    isOwner,
+    pet?.status,
+    reportSent,
+    coordinates,
+    isSupported,
+    getCurrentLocation,
+  ]);
+
+  // Enviar reporte automáticamente cuando se obtengan las coordenadas
+  useEffect(() => {
+    const sendReportAutomatically = async () => {
+      if (
+        !isOwner &&
+        pet?.status === 'lost' &&
+        coordinates &&
+        !reportSent &&
+        pet.id
+      ) {
+        try {
+          await locationReportService.createReport({
+            pet_id: pet.id,
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+            accuracy: coordinates.accuracy,
+            address: address || undefined,
+          });
+
+          setReportSent(true);
+          setReportError(null);
+        } catch (error) {
+          console.error('Error enviando reporte:', error);
+          setReportError('No se pudo enviar el reporte. Intenta de nuevo.');
+        }
+      }
+    };
+
+    sendReportAutomatically();
+  }, [isOwner, pet, coordinates, address, reportSent]);
+
+  // Manejar cambio de estado de la mascota (solo para dueños)
+  const handleStatusChange = useCallback(
+    async (newStatus: PetStatus) => {
+      if (!pet?.id) return;
+
+      setUpdatingStatus(true);
+      try {
+        await petStatusService.updatePetStatus(pet.id, newStatus);
+        setPet((prev) => (prev ? { ...prev, status: newStatus } : null));
+      } catch (error) {
+        console.error('Error actualizando estado:', error);
+        alert('No se pudo actualizar el estado de la mascota');
+      } finally {
+        setUpdatingStatus(false);
+      }
+    },
+    [pet?.id]
+  );
 
   // Calcular edad desde birth_date
   const calculateAge = (birthDate: string) => {
@@ -46,7 +168,7 @@ const PetProfile = () => {
     return age;
   };
 
-  const age = pet.birth_date ? calculateAge(pet.birth_date) : null;
+  const age = pet?.birth_date ? calculateAge(pet.birth_date) : null;
 
   // Función para abrir enlaces de redes sociales
   const openSocialMedia = (platform: string, username: string) => {
@@ -58,9 +180,169 @@ const PetProfile = () => {
     window.open(urls[platform], '_blank');
   };
 
+  if (!pet) {
+    return <LoadingScreen />;
+  }
+
+  const petStatus = pet.status || 'normal';
+  const isLost = petStatus === 'lost';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+        {/* Banner de Mascota Perdida (solo para NO dueños) */}
+        {!isOwner && isLost && (
+          <div className="mb-6 rounded-3xl bg-gradient-to-r from-red-500 to-orange-500 p-6 text-white shadow-xl animate-pulse">
+            <div className="flex items-center gap-3 mb-3">
+              <AlertCircle className="h-8 w-8" />
+              <h2 className="text-2xl font-bold">
+                🚨 MASCOTA PERDIDA
+              </h2>
+            </div>
+            <p className="text-lg mb-4">
+              ¡Ayuda a {pet.name} a regresar a casa!
+            </p>
+
+            {/* Estados de ubicación */}
+            {reportSent ? (
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-semibold">✅ Ubicación enviada al dueño</span>
+                </div>
+                {coordinates && (
+                  <div className="mt-3">
+                    <a
+                      href={locationService.getGoogleMapsUrl(
+                        coordinates.latitude,
+                        coordinates.longitude
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-white text-red-600 px-4 py-2 rounded-full font-medium hover:bg-red-50 transition"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Ver en Google Maps
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : locationLoading ? (
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Obteniendo tu ubicación...</span>
+                </div>
+              </div>
+            ) : locationError ? (
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <p className="mb-3">{locationError}</p>
+                <Button
+                  onClick={getCurrentLocation}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  <Navigation className="h-4 w-4" />
+                  Compartir mi Ubicación
+                </Button>
+              </div>
+            ) : !isSupported ? (
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <p>Tu navegador no soporta geolocalización</p>
+              </div>
+            ) : (
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <Button
+                  onClick={getCurrentLocation}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  <Navigation className="h-4 w-4" />
+                  📍 Compartir mi Ubicación
+                </Button>
+              </div>
+            )}
+
+            {reportError && (
+              <div className="mt-3 bg-red-800 rounded-lg p-3">
+                <p className="text-sm">{reportError}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Panel de control para el dueño */}
+        {isOwner && (
+          <div className="mb-6 rounded-3xl bg-white dark:bg-gray-800 p-6 shadow-lg">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+              Panel de Control del Dueño
+            </h2>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <span className="font-semibold">Estado actual:</span>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    petStatus === 'lost'
+                      ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+                      : petStatus === 'found'
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  {petStatus === 'lost'
+                    ? '🚨 Perdido'
+                    : petStatus === 'found'
+                    ? '✅ Encontrado'
+                    : '✓ Normal'}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {petStatus !== 'lost' && (
+                  <Button
+                    onClick={() => handleStatusChange('lost')}
+                    disabled={updatingStatus}
+                    variant="outline"
+                    className="border-red-500 text-red-600 dark:border-red-400 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30"
+                  >
+                    🚨 Marcar como Perdido
+                  </Button>
+                )}
+
+                {petStatus === 'lost' && (
+                  <Button
+                    onClick={() => handleStatusChange('found')}
+                    disabled={updatingStatus}
+                    variant="outline"
+                    className="border-green-500 text-green-600 dark:border-green-400 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30"
+                  >
+                    ✅ Marcar como Encontrado
+                  </Button>
+                )}
+
+                {petStatus !== 'normal' && (
+                  <Button
+                    onClick={() => handleStatusChange('normal')}
+                    disabled={updatingStatus}
+                    variant="outline"
+                  >
+                    ✓ Estado Normal
+                  </Button>
+                )}
+              </div>
+
+              <Link
+                to="/location-reports"
+                className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              >
+                <MapPin className="h-4 w-4" />
+                Ver Reportes de Ubicación →
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Header con foto */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-6 h-48 w-48 overflow-hidden rounded-full border-4 border-white dark:border-gray-700 shadow-2xl">
