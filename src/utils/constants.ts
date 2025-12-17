@@ -8,5 +8,5 @@ export const ROUTES = {
   PET_PROFILE: '/pet/:id',
 } as const;
 
-export const PET_SPECIES = ['Perro', 'Gato', 'Ave', 'Otro'] as const;
+export const PET_SPECIES = ['Perro', 'Gato'] as const;
 export const PET_SIZES = ['Pequeño', 'Mediano', 'Grande', 'Muy Grande'] as const;

@@ -115,18 +115,6 @@ const BREEDS_BY_SPECIES: Record<string, string[]> = {
     'Común/Criollo',
     'Otra',
   ],
-  Ave: [
-    'Loro',
-    'Periquito',
-    'Canario',
-    'Cacatúa',
-    'Guacamayo',
-    'Agapornis',
-    'Ninfa',
-    'Otra',
-  ],
-  Conejo: ['Holandés', 'Belier', 'Rex', 'Angora', 'Mini Lop', 'Común', 'Otra'],
-  Otro: ['Otra'],
 };
 
 // Componente Card

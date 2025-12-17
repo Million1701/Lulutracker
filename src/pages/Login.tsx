@@ -33,32 +33,21 @@ const Login = () => {
         <Card className="w-full max-w-md p-8">
           <div className="mb-8 text-center">
             <PawPrint className="mx-auto mb-4 h-12 w-12 text-blue-600 dark:text-blue-400" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Bienvenido</h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">Inicia sesión en tu cuenta</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Bienvenido
+            </h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">
+              Inicia sesión en tu cuenta
+            </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSendCode}>
+          <form className="space-y-8" onSubmit={handleSendCode}>
             <Input
               type="email"
               label="Correo electrónico"
               placeholder="email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-700"
-                />
-                <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Recordarme</span>
-              </label>
-              <Link
-                to="/login"
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
-              >
-                ¿Olvidaste tu correo?
-              </Link>
-            </div>
 
             <Button type="submit" className="w-full">
               Iniciar Sesión
