@@ -32,7 +32,7 @@ const PetCard = ({ pet }: PetCardProps) => {
     <>
       <div
         key={pet.qr_code}
-        className="relative w-full h-64 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden group hover:shadow-2xl transition-all duration-300"
+        className="relative w-full h-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden group hover:shadow-2xl transition-all duration-300"
       >
         {/* Imagen de fondo con degradado */}
         <div className="absolute inset-0">
@@ -43,7 +43,7 @@ const PetCard = ({ pet }: PetCardProps) => {
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-200 to-purple-200 text-8xl">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-200 to-purple-200 dark:from-blue-900 dark:to-purple-900 text-8xl">
               🐾
             </div>
           )}
@@ -104,19 +104,19 @@ const PetCard = ({ pet }: PetCardProps) => {
 
               {/* Panel desplegable */}
               {isMenuOpen && (
-                <div className="absolute right-0 top-[-110px] mt-2 w-40 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-10">
+                <div className="absolute right-0 top-[-110px] mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-10">
                   <button
-                    className="text-sm font-medium flex w-full gap-2 items-center py-3 px-3 hover:bg-blue-50 text-blue-600"
+                    className="text-sm font-medium flex w-full gap-2 items-center py-3 px-3 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                     onClick={() => setIsEditMenu(true)}
                   >
-                    <Edit2 className="h-4 w-4 text-blue-600" />
+                    <Edit2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     Editar
                   </button>
                   <button
                     onClick={() => setIsDeletePet(true)}
-                    className="text-sm font-medium flex w-full gap-2 items-center py-3 px-3 hover:bg-red-50 text-red-600"
+                    className="text-sm font-medium flex w-full gap-2 items-center py-3 px-3 hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400"
                   >
-                    <Trash2 className="h-4 w-4 text-red-600" />
+                    <Trash2 className="h-4 w-4 text-red-600 dark:text-red-400" />
                     Eliminar
                   </button>
                 </div>
@@ -141,15 +141,15 @@ const PetCard = ({ pet }: PetCardProps) => {
 
       {isDeletePet && pet.id ? (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-xl p-6 w-[90%] max-w-sm shadow-lg">
-            <p className="text-lg font-semibold text-center mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 w-[90%] max-w-sm shadow-lg">
+            <p className="text-lg font-semibold text-center mb-4 text-gray-900 dark:text-gray-100">
               ¿Deseas eliminar <span className="font-bold">{pet.name}</span>?
             </p>
 
             <div className="flex items-center justify-center gap-3 mt-2">
               <Button
                 type="button"
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                className="flex-1 bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white"
                 onClick={() => pet?.id && deletePet(pet.id)}
               >
                 Eliminar

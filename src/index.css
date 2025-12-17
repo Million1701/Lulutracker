@@ -1,3 +1,142 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  /* Animaciones de entrada */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Estados iniciales - invisible hasta que se active */
+  .scroll-animate {
+    opacity: 0;
+  }
+
+  /* Animaciones que se activan con scroll */
+  .scroll-animate.is-visible {
+    animation-fill-mode: forwards;
+  }
+
+  .scroll-animate.is-visible.animate-fadeIn {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  .scroll-animate.is-visible.animate-slideUp {
+    animation: slideUp 0.8s ease-out forwards;
+  }
+
+  .scroll-animate.is-visible.animate-slideInLeft {
+    animation: slideInLeft 0.8s ease-out forwards;
+  }
+
+  .scroll-animate.is-visible.animate-slideInRight {
+    animation: slideInRight 0.8s ease-out forwards;
+  }
+
+  .scroll-animate.is-visible.animate-scaleIn {
+    animation: scaleIn 0.6s ease-out forwards;
+  }
+
+  /* Animaciones inmediatas (sin scroll) - para hero section */
+  .animate-fadeIn-immediate {
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .animate-slideUp-immediate {
+    animation: slideUp 0.8s ease-out;
+  }
+
+  .animate-slideInLeft-immediate {
+    animation: slideInLeft 0.8s ease-out;
+  }
+
+  .animate-slideInRight-immediate {
+    animation: slideInRight 0.8s ease-out;
+  }
+
+  .animate-scaleIn-immediate {
+    animation: scaleIn 0.6s ease-out;
+  }
+
+  /* Delays para animaciones escalonadas */
+  .animation-delay-100 {
+    animation-delay: 0.1s;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-300 {
+    animation-delay: 0.3s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  /* Para que las animaciones con delay no se vean antes */
+  .animation-fill-both {
+    animation-fill-mode: both;
+  }
+}
