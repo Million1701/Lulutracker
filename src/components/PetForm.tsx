@@ -133,7 +133,11 @@ const BREEDS_BY_SPECIES: Record<string, string[]> = {
 const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({
   children,
   className = '',
-}) => <div className={`bg-white shadow-lg ${className}`}>{children}</div>;
+}) => (
+  <div className={`bg-white dark:bg-gray-800 shadow-lg ${className}`}>
+    {children}
+  </div>
+);
 
 // Componente Input
 const Input: React.FC<{
@@ -156,7 +160,7 @@ const Input: React.FC<{
   className = '',
 }) => (
   <div className={className}>
-    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
       {label}
     </label>
     <input
@@ -165,14 +169,14 @@ const Input: React.FC<{
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className={`w-full rounded-lg border px-4 py-2 text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-20 ${
+      className={`w-full rounded-lg border px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-20 ${
         error
           ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-          : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+          : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
       }`}
     />
     {error && (
-      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+      <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
         <AlertCircle className="h-4 w-4" />
         {error}
       </p>
@@ -199,9 +203,10 @@ const Button: React.FC<{
   const baseStyles =
     'px-4 py-3 rounded-lg font-medium transition-all min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed';
   const variants = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95',
+    primary:
+      'bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 active:scale-95',
     outline:
-      'border border-gray-300 text-gray-700 hover:bg-gray-50 active:scale-95',
+      'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95',
   };
 
   return (
@@ -233,7 +238,7 @@ const MultiSelect: React.FC<{
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
         {label}
       </label>
       <div className="flex flex-wrap gap-2">
@@ -244,8 +249,8 @@ const MultiSelect: React.FC<{
             onClick={() => toggleOption(option)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
               selected.includes(option)
-                ? 'bg-blue-600 text-white shadow-md scale-105'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-blue-600 dark:bg-blue-500 text-white shadow-md scale-105'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
             }`}
           >
             {option}
@@ -576,18 +581,18 @@ const PetForm: React.FC<PetFormProps> = ({
 
   return (
     <div className="max-w-2xl mx-auto w-full h-full sm:h-fit sm:max-h-[800px] overflow-auto my-0 sm:my-8">
-      <Card className="p-4 sm:p-8 rounded-none sm:rounded-lg pb-24 sm:pb-8 sm:bg-white sm:border sm:border-gray-200">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+      <Card className="p-4 sm:p-8 rounded-none sm:rounded-lg pb-24 sm:pb-8 sm:bg-white dark:sm:bg-gray-800 sm:border sm:border-gray-200 dark:sm:border-gray-700">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           {isEditMode ? 'Editar mascota' : 'Registra tu mascota'}
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 dark:text-gray-300 mb-6">
           {isEditMode
             ? 'Actualiza la información de tu mascota'
             : 'Completa la información de tu mascota para crear su perfil QR'}
         </p>
 
         {/* Navegación por pestañas */}
-        <div className="flex overflow-x-auto overflow-hidden mb-8 border-b border-gray-200 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex overflow-x-auto overflow-hidden mb-8 border-b border-gray-200 dark:border-gray-700 -mx-4 px-4 sm:mx-0 sm:px-0">
           {sections.map((section) => (
             <button
               key={section.id}
@@ -595,8 +600,8 @@ const PetForm: React.FC<PetFormProps> = ({
               type="button"
               className={`px-4 py-3 font-medium whitespace-nowrap transition-all ${
                 activeSection === section.id
-                  ? 'border-b-2 border-blue-600 text-blue-600 scale-105'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'border-b-2 border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 scale-105'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
               }`}
             >
               {section.label}
@@ -619,14 +624,14 @@ const PetForm: React.FC<PetFormProps> = ({
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                     Especie *
                   </label>
                   <select
                     name="species"
                     value={formData.species}
                     onChange={handleInputChange}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                   >
                     {PET_SPECIES.map((species) => (
                       <option key={species} value={species}>
@@ -638,7 +643,7 @@ const PetForm: React.FC<PetFormProps> = ({
 
                 {showCustomBreed ? (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                       Raza personalizada *
                     </label>
                     <div className="flex gap-2">
@@ -648,10 +653,10 @@ const PetForm: React.FC<PetFormProps> = ({
                         placeholder="Escribe la raza"
                         value={formData.breed}
                         onChange={handleInputChange}
-                        className={`flex-1 rounded-lg border px-4 py-2 text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-20 ${
+                        className={`flex-1 rounded-lg border px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-20 ${
                           errors.breed
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                            : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                            : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
                         }`}
                       />
                       <button
@@ -660,13 +665,13 @@ const PetForm: React.FC<PetFormProps> = ({
                           setShowCustomBreed(false);
                           setFormData((prev) => ({ ...prev, breed: '' }));
                         }}
-                        className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
+                        className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         Volver
                       </button>
                     </div>
                     {errors.breed && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
                         <AlertCircle className="h-4 w-4" />
                         {errors.breed}
                       </p>
@@ -674,17 +679,17 @@ const PetForm: React.FC<PetFormProps> = ({
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                       Raza *
                     </label>
                     <select
                       name="breed"
                       value={formData.breed}
                       onChange={handleInputChange}
-                      className={`w-full rounded-lg border px-4 py-2 text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-20 ${
+                      className={`w-full rounded-lg border px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-opacity-20 ${
                         errors.breed
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                          : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
                       }`}
                     >
                       <option value="">Selecciona una raza</option>
@@ -695,7 +700,7 @@ const PetForm: React.FC<PetFormProps> = ({
                       ))}
                     </select>
                     {errors.breed && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
                         <AlertCircle className="h-4 w-4" />
                         {errors.breed}
                       </p>
@@ -712,14 +717,14 @@ const PetForm: React.FC<PetFormProps> = ({
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                     Tamaño
                   </label>
                   <select
                     name="size"
                     value={formData.size}
                     onChange={handleInputChange}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                   >
                     {PET_SIZES.map((size) => (
                       <option key={size} value={size}>
@@ -740,7 +745,7 @@ const PetForm: React.FC<PetFormProps> = ({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Descripción general
                 </label>
                 <textarea
@@ -749,7 +754,7 @@ const PetForm: React.FC<PetFormProps> = ({
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                 />
               </div>
             </div>
@@ -766,7 +771,7 @@ const PetForm: React.FC<PetFormProps> = ({
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Alergias
                 </label>
                 <textarea
@@ -775,12 +780,12 @@ const PetForm: React.FC<PetFormProps> = ({
                   value={formData.allergies}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Medicamentos
                 </label>
                 <textarea
@@ -789,12 +794,12 @@ const PetForm: React.FC<PetFormProps> = ({
                   value={formData.medications}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Enfermedades o condiciones médicas
                 </label>
                 <textarea
@@ -803,12 +808,12 @@ const PetForm: React.FC<PetFormProps> = ({
                   value={formData.diseases}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Recomendaciones de cuidado
                 </label>
                 <textarea
@@ -817,7 +822,7 @@ const PetForm: React.FC<PetFormProps> = ({
                   value={formData.care_recommendations}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                 />
               </div>
             </div>
@@ -826,8 +831,8 @@ const PetForm: React.FC<PetFormProps> = ({
           {/* Emergencia */}
           {activeSection === 'emergency' && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                <p className="text-sm text-yellow-800">
+              <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 mb-6">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
                   <strong>Importante:</strong> Esta información será visible en
                   el QR para que puedan contactarte si encuentran a tu mascota.
                 </p>
@@ -864,7 +869,7 @@ const PetForm: React.FC<PetFormProps> = ({
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Instrucciones de recuperación
                 </label>
                 <textarea
@@ -873,7 +878,7 @@ const PetForm: React.FC<PetFormProps> = ({
                   value={formData.recovery_instructions}
                   onChange={handleInputChange}
                   rows={5}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                 />
               </div>
             </div>
@@ -883,7 +888,7 @@ const PetForm: React.FC<PetFormProps> = ({
           {activeSection === 'photos' && (
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                   Foto principal *
                 </label>
                 {previews.photo_1 ? (
@@ -896,18 +901,18 @@ const PetForm: React.FC<PetFormProps> = ({
                     <button
                       type="button"
                       onClick={() => removeImage('photo_1')}
-                      className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white transition-colors hover:bg-red-600"
+                      className="absolute -right-2 -top-2 rounded-full bg-red-500 dark:bg-red-600 p-1 text-white transition-colors hover:bg-red-600 dark:hover:bg-red-700"
                     >
                       <X className="h-5 w-5" />
                     </button>
                   </div>
                 ) : (
-                  <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 py-12 transition-colors hover:border-blue-500 hover:bg-blue-50">
-                    <Upload className="mb-2 h-8 w-8 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700">
+                  <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 py-12 transition-colors hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                    <Upload className="mb-2 h-8 w-8 text-gray-400 dark:text-gray-500" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Subir foto principal
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
                       PNG, JPG hasta 5MB
                     </span>
                     <input
@@ -922,7 +927,7 @@ const PetForm: React.FC<PetFormProps> = ({
 
               {/* ⬇️ NUEVO: Usar el componente MultiPhotoUploader */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Fotos adicionales (máximo 5)
                 </label>
                 <MultiPhotoUploader
@@ -940,8 +945,8 @@ const PetForm: React.FC<PetFormProps> = ({
           {/* Redes Sociales */}
           {activeSection === 'social' && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
-                <p className="text-sm text-blue-800">
+              <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 dark:border-blue-500 p-4 mb-6">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
                   <strong>Opcional:</strong> Agrega tus redes sociales para que
                   puedan identificarte como el dueño de la mascota.
                 </p>
@@ -972,7 +977,7 @@ const PetForm: React.FC<PetFormProps> = ({
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                   Otros enlaces
                 </label>
 
@@ -985,7 +990,7 @@ const PetForm: React.FC<PetFormProps> = ({
                       onChange={(e) =>
                         updateOtherLink(index, 'name', e.target.value)
                       }
-                      className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                      className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                     />
                     <input
                       type="url"
@@ -994,12 +999,12 @@ const PetForm: React.FC<PetFormProps> = ({
                       onChange={(e) =>
                         updateOtherLink(index, 'url', e.target.value)
                       }
-                      className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                      className="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-900 dark:text-gray-100 dark:bg-gray-700 placeholder-gray-400 dark:placeholder-gray-500 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
                     />
                     <button
                       type="button"
                       onClick={() => removeOtherLink(index)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all hover:scale-110"
+                      className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all hover:scale-110"
                     >
                       <Trash2 className="h-5 w-5" />
                     </button>
@@ -1009,7 +1014,7 @@ const PetForm: React.FC<PetFormProps> = ({
                 <button
                   type="button"
                   onClick={addOtherLink}
-                  className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-all hover:gap-3"
+                  className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm transition-all hover:gap-3"
                 >
                   <Plus className="h-4 w-4" />
                   Agregar enlace
@@ -1019,7 +1024,7 @@ const PetForm: React.FC<PetFormProps> = ({
           )}
 
           {/* Botones de acción */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-6 pb-12 sm:pb-0 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row gap-4 pt-6 pb-12 sm:pb-0 border-t border-gray-200 dark:border-gray-700">
             <Button type="submit" className="flex-1" disabled={loading}>
               {loading
                 ? 'Guardando...'
@@ -1044,9 +1049,9 @@ const PetForm: React.FC<PetFormProps> = ({
 
       {loading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 flex flex-col items-center gap-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-            <p className="text-gray-700 font-medium">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 dark:border-blue-400 border-t-transparent"></div>
+            <p className="text-gray-700 dark:text-gray-300 font-medium">
               {isEditMode ? 'Actualizando...' : 'Creando perfil...'}
             </p>
           </div>
