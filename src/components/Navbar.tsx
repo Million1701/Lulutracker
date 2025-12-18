@@ -6,6 +6,7 @@ import Button from './ui/Button';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
 import { supabase } from '../lib/supabase';
+import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,6 +43,8 @@ const Navbar = () => {
               >
                 Mis Mascotas
               </Link>
+              {/* Campana de notificaciones */}
+              <NotificationBell userId={user.id} />
               <button
                 onClick={toggleTheme}
                 className="rounded-lg p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"

@@ -126,3 +126,30 @@ export interface GeocodeResult {
     postcode?: string;
   };
 }
+
+// ==========================================
+// Notification Types
+// ==========================================
+
+export type NotificationType = 'location_report' | 'pet_status_change' | 'system';
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  pet_id?: string;
+  location_report_id?: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+}
+
+export interface CreateNotificationData {
+  user_id: string;
+  pet_id?: string;
+  location_report_id?: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+}

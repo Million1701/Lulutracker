@@ -8,6 +8,7 @@ import { useLocation } from '../hooks/useLocation';
 import { locationReportService, petStatusService } from '../services/locationReportService';
 import { locationService } from '../services/locationService';
 import Button from '../components/ui/Button';
+import { isSafariOrRestrictive, getBrowserName } from '../utils/browserDetection';
 
 const PetProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,8 @@ const PetProfile = () => {
   const [reportSent, setReportSent] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [isRestrictiveBrowser, setIsRestrictiveBrowser] = useState(false);
+  const [userClickedShare, setUserClickedShare] = useState(false);
 
   const {
     coordinates,
@@ -26,6 +29,11 @@ const PetProfile = () => {
     getCurrentLocation,
     isSupported,
   } = useLocation();
+
+  // Detectar si el navegador es restrictivo (Safari/iOS)
+  useEffect(() => {
+    setIsRestrictiveBrowser(isSafariOrRestrictive());
+  }, []);
 
   // Verificar si el usuario actual es el dueño
   useEffect(() => {
@@ -73,6 +81,7 @@ const PetProfile = () => {
   }, [id]);
 
   // Solicitar ubicación automáticamente si la mascota está perdida y NO es el dueño
+  // SOLO en navegadores que permiten solicitud automática (no Safari/iOS)
   useEffect(() => {
     const requestLocationAutomatically = async () => {
       if (
@@ -81,7 +90,8 @@ const PetProfile = () => {
         pet?.status === 'lost' &&
         !reportSent &&
         !coordinates &&
-        isSupported
+        isSupported &&
+        !isRestrictiveBrowser // NO solicitar automáticamente en Safari/iOS
       ) {
         // Solicitar ubicación automáticamente
         try {
@@ -100,6 +110,7 @@ const PetProfile = () => {
     reportSent,
     coordinates,
     isSupported,
+    isRestrictiveBrowser,
     getCurrentLocation,
   ]);
 
@@ -141,8 +152,24 @@ const PetProfile = () => {
 
       setUpdatingStatus(true);
       try {
-        await petStatusService.updatePetStatus(pet.id, newStatus);
+        const { dismissedCount } = await petStatusService.handlePetStatusChange(
+          pet.id,
+          newStatus
+        );
         setPet((prev) => (prev ? { ...prev, status: newStatus } : null));
+
+        // Mostrar mensaje de confirmación
+        if (newStatus === 'found' && dismissedCount > 0) {
+          alert(
+            `✅ Mascota marcada como encontrada y ${dismissedCount} ${
+              dismissedCount === 1 ? 'reporte pendiente archivado' : 'reportes pendientes archivados'
+            }`
+          );
+        } else if (newStatus === 'lost') {
+          alert('🚨 Mascota marcada como perdida. Los usuarios podrán reportar su ubicación.');
+        } else if (newStatus === 'normal') {
+          alert('✓ Estado actualizado a normal');
+        }
       } catch (error) {
         console.error('Error actualizando estado:', error);
         alert('No se pudo actualizar el estado de la mascota');
@@ -152,6 +179,17 @@ const PetProfile = () => {
     },
     [pet?.id]
   );
+
+  // Manejar click del botón de compartir ubicación (para Safari/iOS)
+  const handleShareLocationClick = useCallback(async () => {
+    setUserClickedShare(true);
+    try {
+      await getCurrentLocation();
+    } catch (error) {
+      console.error('Error al obtener ubicación:', error);
+      // El error ya se maneja en el hook useLocation
+    }
+  }, [getCurrentLocation]);
 
   // Calcular edad desde birth_date
   const calculateAge = (birthDate: string) => {
@@ -203,64 +241,89 @@ const PetProfile = () => {
               ¡Ayuda a {pet.name} a regresar a casa!
             </p>
 
-            {/* Estados de ubicación */}
-            {reportSent ? (
-              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5" />
-                  <span className="font-semibold">✅ Ubicación enviada al dueño</span>
-                </div>
-                {coordinates && (
-                  <div className="mt-3">
-                    <a
-                      href={locationService.getGoogleMapsUrl(
-                        coordinates.latitude,
-                        coordinates.longitude
-                      )}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-white text-red-600 px-4 py-2 rounded-full font-medium hover:bg-red-50 transition"
-                    >
-                      <MapPin className="h-4 w-4" />
-                      Ver en Google Maps
-                    </a>
+            {/* FLUJO PARA SAFARI/iOS - Requiere interacción del usuario */}
+            {isRestrictiveBrowser && !userClickedShare && !reportSent && (
+              <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm text-center">
+                <p className="mb-4 text-base">
+                  Para ayudar a encontrar a {pet.name}, necesitamos tu ubicación actual.
+                </p>
+                <Button
+                  onClick={handleShareLocationClick}
+                  size="lg"
+                  variant="secondary"
+                  className="w-full py-4 text-lg font-bold flex items-center justify-center gap-3 bg-white text-red-600 hover:bg-red-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                >
+                  <Navigation className="h-6 w-6" />
+                  📍 Ayudar con mi Ubicación
+                </Button>
+                <p className="mt-3 text-sm text-white/80">
+                  Tu ubicación solo se compartirá con el dueño de {pet.name}
+                </p>
+              </div>
+            )}
+
+            {/* Estados de ubicación (después de que el usuario hace click en Safari/iOS o automático en otros navegadores) */}
+            {(!isRestrictiveBrowser || userClickedShare) && (
+              <>
+                {reportSent ? (
+                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-5 w-5" />
+                      <span className="font-semibold">✅ Ubicación enviada al dueño</span>
+                    </div>
+                    {coordinates && (
+                      <div className="mt-3">
+                        <a
+                          href={locationService.getGoogleMapsUrl(
+                            coordinates.latitude,
+                            coordinates.longitude
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 bg-white text-red-600 px-4 py-2 rounded-full font-medium hover:bg-red-50 transition"
+                        >
+                          <MapPin className="h-4 w-4" />
+                          Ver en Google Maps
+                        </a>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ) : locationLoading ? (
-              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  <span>Obteniendo tu ubicación...</span>
-                </div>
-              </div>
-            ) : locationError ? (
-              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                <p className="mb-3">{locationError}</p>
-                <Button
-                  onClick={getCurrentLocation}
-                  variant="secondary"
-                  className="flex items-center gap-2"
-                >
-                  <Navigation className="h-4 w-4" />
-                  Compartir mi Ubicación
-                </Button>
-              </div>
-            ) : !isSupported ? (
-              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                <p>Tu navegador no soporta geolocalización</p>
-              </div>
-            ) : (
-              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                <Button
-                  onClick={getCurrentLocation}
-                  variant="secondary"
-                  className="flex items-center gap-2"
-                >
-                  <Navigation className="h-4 w-4" />
-                  📍 Compartir mi Ubicación
-                </Button>
-              </div>
+                ) : locationLoading ? (
+                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <span>Obteniendo tu ubicación...</span>
+                    </div>
+                  </div>
+                ) : locationError ? (
+                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                    <p className="mb-3">{locationError}</p>
+                    <Button
+                      onClick={handleShareLocationClick}
+                      variant="secondary"
+                      className="flex items-center gap-2"
+                    >
+                      <Navigation className="h-4 w-4" />
+                      Intentar de Nuevo
+                    </Button>
+                  </div>
+                ) : !isSupported ? (
+                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                    <p>Tu {getBrowserName()} no soporta geolocalización</p>
+                  </div>
+                ) : !isRestrictiveBrowser ? (
+                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                    <Button
+                      onClick={handleShareLocationClick}
+                      variant="secondary"
+                      className="flex items-center gap-2"
+                    >
+                      <Navigation className="h-4 w-4" />
+                      📍 Compartir mi Ubicación
+                    </Button>
+                  </div>
+                ) : null}
+              </>
             )}
 
             {reportError && (
