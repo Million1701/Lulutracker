@@ -79,16 +79,20 @@ const Navbar = () => {
             </div>
           )}
 
-          <button
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6 text-gray-700 dark:text-gray-200" />
-            ) : (
-              <Menu className="h-6 w-6 text-gray-700 dark:text-gray-200" />
-            )}
-          </button>
+          {/* Mobile: NotificationBell y Menu */}
+          <div className="flex items-center gap-3 md:hidden">
+            {user && <NotificationBell userId={user.id} />}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6 text-gray-700 dark:text-gray-200" />
+              ) : (
+                <Menu className="h-6 w-6 text-gray-700 dark:text-gray-200" />
+              )}
+            </button>
+          </div>
         </div>
 
         {isMenuOpen && (

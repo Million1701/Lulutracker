@@ -5,6 +5,18 @@ import { GeocodeResult, LocationCoordinates } from '../types';
  */
 export const locationService = {
   /**
+   * Detecta si el dispositivo es iOS/Safari
+   */
+  isIOSOrSafari(): boolean {
+    if (typeof navigator === 'undefined') return false;
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+    return isIOS || isSafari;
+  },
+
+  /**
    * Obtener la ubicación actual del usuario usando la API de Geolocation
    * @param highAccuracy - Si se debe usar alta precisión (más lento pero más preciso)
    * @returns Promise con las coordenadas o error
@@ -18,14 +30,32 @@ export const locationService = {
         return;
       }
 
+      // Configuración especial para iOS/Safari
+      const isIOS = this.isIOSOrSafari();
+
       const options: PositionOptions = {
-        enableHighAccuracy: highAccuracy,
-        timeout: 10000, // 10 segundos
+        // iOS puede fallar con high accuracy si no se otorga "Ubicación Precisa"
+        // Usar false en iOS para mayor compatibilidad
+        enableHighAccuracy: isIOS ? false : highAccuracy,
+        // iOS necesita más tiempo para mostrar el prompt de permisos
+        timeout: isIOS ? 30000 : 10000, // 30s para iOS, 10s para otros
         maximumAge: 0, // No usar caché
       };
 
+      console.log('📍 Solicitando ubicación con opciones:', {
+        isIOS,
+        userAgent: navigator.userAgent,
+        options
+      });
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log('✅ Ubicación obtenida exitosamente:', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          });
+
           resolve({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
@@ -33,20 +63,42 @@ export const locationService = {
           });
         },
         (error) => {
+          console.error('❌ Error de geolocalización:', {
+            code: error.code,
+            message: error.message
+          });
+
           let errorMessage = 'Error al obtener ubicación';
 
           switch (error.code) {
             case error.PERMISSION_DENIED:
-              errorMessage =
-                'Permiso de ubicación denegado. Por favor, habilita los permisos de ubicación en tu navegador.';
+              if (isIOS) {
+                errorMessage =
+                  '⚠️ Permiso de ubicación denegado.\n\n' +
+                  'En iOS/Safari:\n' +
+                  '1. Ve a Ajustes → Safari → Ubicación\n' +
+                  '2. Selecciona "Permitir"\n' +
+                  '3. Recarga esta página y vuelve a intentar';
+              } else {
+                errorMessage =
+                  'Permiso de ubicación denegado. Por favor, habilita los permisos de ubicación en tu navegador.';
+              }
               break;
             case error.POSITION_UNAVAILABLE:
               errorMessage =
-                'Información de ubicación no disponible. Verifica tu conexión GPS.';
+                'Información de ubicación no disponible. Verifica tu conexión GPS o datos móviles.';
               break;
             case error.TIMEOUT:
-              errorMessage =
-                'Tiempo de espera agotado al obtener ubicación. Intenta de nuevo.';
+              if (isIOS) {
+                errorMessage =
+                  'Tiempo de espera agotado. En iOS, asegúrate de:\n' +
+                  '1. Haber dado permiso en el prompt\n' +
+                  '2. Tener los servicios de ubicación activados en Ajustes\n' +
+                  '3. Tener buena señal GPS o WiFi';
+              } else {
+                errorMessage =
+                  'Tiempo de espera agotado al obtener ubicación. Intenta de nuevo.';
+              }
               break;
           }
 

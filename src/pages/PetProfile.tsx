@@ -18,8 +18,11 @@ const PetProfile = () => {
   const [reportSent, setReportSent] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
-  const [isRestrictiveBrowser, setIsRestrictiveBrowser] = useState(false);
   const [userClickedShare, setUserClickedShare] = useState(false);
+
+  // Detectar navegador restrictivo SÍNCRONAMENTE para evitar race conditions
+  // Esto debe hacerse antes de cualquier useEffect que pueda solicitar ubicación
+  const isRestrictiveBrowser = isSafariOrRestrictive();
 
   const {
     coordinates,
@@ -30,10 +33,12 @@ const PetProfile = () => {
     isSupported,
   } = useLocation();
 
-  // Detectar si el navegador es restrictivo (Safari/iOS)
+  // Log de detección de navegador
   useEffect(() => {
-    setIsRestrictiveBrowser(isSafariOrRestrictive());
-  }, []);
+    console.log('🔧 PetProfile - Navegador restrictivo:', isRestrictiveBrowser);
+    console.log('🔧 PetProfile - User Agent:', navigator.userAgent);
+    console.log('🔧 PetProfile - Platform:', navigator.platform);
+  }, [isRestrictiveBrowser]);
 
   // Verificar si el usuario actual es el dueño
   useEffect(() => {
@@ -42,6 +47,12 @@ const PetProfile = () => {
         const {
           data: { user },
         } = await supabase.auth.getUser();
+
+        console.log('👤 Verificando propiedad:', {
+          userId: user?.id,
+          petOwnerId: pet?.user_id,
+          isOwner: user && pet && pet.user_id === user.id
+        });
 
         if (user && pet && pet.user_id === user.id) {
           setIsOwner(true);
@@ -241,8 +252,59 @@ const PetProfile = () => {
               ¡Ayuda a {pet.name} a regresar a casa!
             </p>
 
-            {/* FLUJO PARA SAFARI/iOS - Requiere interacción del usuario */}
-            {isRestrictiveBrowser && !userClickedShare && !reportSent && (
+            {/* Estados de ubicación */}
+            {reportSent ? (
+              /* ESTADO: Ubicación ya enviada */
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-semibold">✅ Ubicación enviada al dueño</span>
+                </div>
+                {coordinates && (
+                  <div className="mt-3">
+                    <a
+                      href={locationService.getGoogleMapsUrl(
+                        coordinates.latitude,
+                        coordinates.longitude
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-white text-red-600 px-4 py-2 rounded-full font-medium hover:bg-red-50 transition"
+                    >
+                      <MapPin className="h-4 w-4" />
+                      Ver en Google Maps
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : locationLoading ? (
+              /* ESTADO: Obteniendo ubicación */
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Obteniendo tu ubicación...</span>
+                </div>
+              </div>
+            ) : locationError ? (
+              /* ESTADO: Error al obtener ubicación */
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <p className="mb-3">{locationError}</p>
+                <Button
+                  onClick={handleShareLocationClick}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  <Navigation className="h-4 w-4" />
+                  Intentar de Nuevo
+                </Button>
+              </div>
+            ) : !isSupported ? (
+              /* ESTADO: Navegador no soporta geolocalización */
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <p>Tu {getBrowserName()} no soporta geolocalización</p>
+              </div>
+            ) : isRestrictiveBrowser && !userClickedShare ? (
+              /* FLUJO SAFARI/iOS: Mostrar botón grande antes de solicitar permisos */
               <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm text-center">
                 <p className="mb-4 text-base">
                   Para ayudar a encontrar a {pet.name}, necesitamos tu ubicación actual.
@@ -260,70 +322,18 @@ const PetProfile = () => {
                   Tu ubicación solo se compartirá con el dueño de {pet.name}
                 </p>
               </div>
-            )}
-
-            {/* Estados de ubicación (después de que el usuario hace click en Safari/iOS o automático en otros navegadores) */}
-            {(!isRestrictiveBrowser || userClickedShare) && (
-              <>
-                {reportSent ? (
-                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle className="h-5 w-5" />
-                      <span className="font-semibold">✅ Ubicación enviada al dueño</span>
-                    </div>
-                    {coordinates && (
-                      <div className="mt-3">
-                        <a
-                          href={locationService.getGoogleMapsUrl(
-                            coordinates.latitude,
-                            coordinates.longitude
-                          )}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 bg-white text-red-600 px-4 py-2 rounded-full font-medium hover:bg-red-50 transition"
-                        >
-                          <MapPin className="h-4 w-4" />
-                          Ver en Google Maps
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                ) : locationLoading ? (
-                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Obteniendo tu ubicación...</span>
-                    </div>
-                  </div>
-                ) : locationError ? (
-                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <p className="mb-3">{locationError}</p>
-                    <Button
-                      onClick={handleShareLocationClick}
-                      variant="secondary"
-                      className="flex items-center gap-2"
-                    >
-                      <Navigation className="h-4 w-4" />
-                      Intentar de Nuevo
-                    </Button>
-                  </div>
-                ) : !isSupported ? (
-                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <p>Tu {getBrowserName()} no soporta geolocalización</p>
-                  </div>
-                ) : !isRestrictiveBrowser ? (
-                  <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                    <Button
-                      onClick={handleShareLocationClick}
-                      variant="secondary"
-                      className="flex items-center gap-2"
-                    >
-                      <Navigation className="h-4 w-4" />
-                      📍 Compartir mi Ubicación
-                    </Button>
-                  </div>
-                ) : null}
-              </>
+            ) : (
+              /* FLUJO NORMAL: Botón para Chrome/Firefox/Edge */
+              <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+                <Button
+                  onClick={handleShareLocationClick}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  <Navigation className="h-4 w-4" />
+                  📍 Compartir mi Ubicación
+                </Button>
+              </div>
             )}
 
             {reportError && (

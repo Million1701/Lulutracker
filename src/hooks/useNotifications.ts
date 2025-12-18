@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { notificationService } from '../services/notificationService';
+import { pushNotificationService } from '../services/pushNotificationService';
 import { Notification } from '../types';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -116,7 +117,7 @@ export const useNotifications = (
 
   // Manejar nueva notificación en tiempo real
   const handleNewNotification = useCallback((newNotification: Notification) => {
-    console.log('Nueva notificación recibida en tiempo real:', newNotification);
+    console.log('🔔 Nueva notificación recibida en tiempo real:', newNotification);
 
     // Agregar al principio de la lista
     setNotifications((prev) => [newNotification, ...prev]);
@@ -126,9 +127,21 @@ export const useNotifications = (
       setUnreadCount((prev) => prev + 1);
     }
 
-    // Opcional: Reproducir sonido o mostrar notificación del navegador
-    // playNotificationSound();
-    // showBrowserNotification(newNotification);
+    // Mostrar notificación del navegador si el permiso está otorgado
+    if (pushNotificationService.getPermissionStatus() === 'granted') {
+      pushNotificationService.showNotification({
+        title: newNotification.title,
+        body: newNotification.message,
+        tag: `notification-${newNotification.id}`,
+        data: {
+          url: newNotification.location_report_id ? '/location-reports' : '/notifications',
+          notificationId: newNotification.id,
+        },
+        requireInteraction: true,
+      }).catch((err) => {
+        console.error('Error mostrando notificación del navegador:', err);
+      });
+    }
   }, []);
 
   // Cargar notificaciones inicialmente
