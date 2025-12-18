@@ -1,5 +1,3 @@
-// PetForm.tsx - VERSIÓN MEJORADA
-
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { PET_SIZES, PET_SPECIES } from '../utils/constants';
 import { Upload, X, Plus, Trash2, AlertCircle } from 'lucide-react';

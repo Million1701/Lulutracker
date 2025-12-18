@@ -41,7 +41,7 @@ const Login = () => {
             </p>
           </div>
 
-          <form className="space-y-8" onSubmit={handleSendCode}>
+          <form className="space-y-10" onSubmit={handleSendCode}>
             <Input
               type="email"
               label="Correo electrónico"

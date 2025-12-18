@@ -50,11 +50,7 @@ const QRSuccess = () => {
 
   // 🔥 AHORA sí puedes hacer el return condicional DESPUÉS de los hooks
   if (!qr) {
-    return (
-      <p className="text-gray-900 dark:text-gray-100">
-        Error: No se recibió el código QR.
-      </p>
-    );
+    return <p className="text-gray-900 dark:text-gray-100">Error: No se recibió el código QR.</p>;
   }
 
   return (
