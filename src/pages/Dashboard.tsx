@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase';
 import { PetFormData } from '../types';
 import PetCard from '../components/PetCard';
 import { LoadingScreen } from '../components/LoadingScreen';
+import NotificationPermissionBanner from '../components/NotificationPermissionBanner';
 
 const Dashboard = () => {
   const [pets, setPets] = useState<PetFormData[]>([]);
@@ -96,6 +97,9 @@ const Dashboard = () => {
           </Card>
         </div>
       )}
+
+      {/* Banner para solicitar permisos de notificación */}
+      <NotificationPermissionBanner />
     </>
   );
 };

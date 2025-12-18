@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import QRSuccess from './pages/QRSuccess';
 import LocationReportsDashboard from './pages/LocationReportsDashboard';
+import NotificationsPage from './pages/NotificationsPage';
 
 function App() {
   useEffect(() => {
@@ -55,6 +56,7 @@ function App() {
                   element={<QRSuccess />}
                 />
                 <Route path="/location-reports" element={<LocationReportsDashboard />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
               </Route>
               <Route path="/pet/:id" element={<PetProfile />} />
             </Route>

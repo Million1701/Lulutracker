@@ -213,6 +213,26 @@ export const locationReportService = {
 };
 
 /**
+ * Descartar todos los reportes pendientes de una mascota
+ * Útil cuando la mascota ha sido encontrada
+ */
+export async function dismissPendingReports(petId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from('location_reports')
+    .update({ status: 'dismissed' })
+    .eq('pet_id', petId)
+    .eq('status', 'pending')
+    .select();
+
+  if (error) {
+    console.error('Error al descartar reportes pendientes:', error);
+    throw new Error('No se pudieron descartar los reportes pendientes');
+  }
+
+  return data?.length || 0;
+}
+
+/**
  * Servicio para manejar el estado de las mascotas (lost/found/normal)
  */
 export const petStatusService = {
@@ -247,5 +267,41 @@ export const petStatusService = {
     }
 
     return data?.status || 'normal';
+  },
+
+  /**
+   * Manejar cambio de estado de mascota con lógica automática
+   * - Si se marca como 'found': descarta reportes pendientes
+   * - Si se marca como 'lost': no hace nada extra
+   * - Si se marca como 'normal': no hace nada extra
+   *
+   * @returns Número de reportes descartados (si aplica)
+   */
+  async handlePetStatusChange(
+    petId: string,
+    newStatus: PetStatus
+  ): Promise<{ dismissedCount: number }> {
+    // Actualizar el estado de la mascota
+    await this.updatePetStatus(petId, newStatus);
+
+    let dismissedCount = 0;
+
+    // Si la mascota se marca como 'found', descartar todos los reportes pendientes
+    if (newStatus === 'found') {
+      try {
+        dismissedCount = await dismissPendingReports(petId);
+        console.log(
+          `Mascota marcada como encontrada. ${dismissedCount} reportes pendientes archivados.`
+        );
+      } catch (error) {
+        console.error(
+          'Error al descartar reportes pendientes, pero el estado se actualizó:',
+          error
+        );
+        // No lanzamos error aquí porque el estado ya se actualizó
+      }
+    }
+
+    return { dismissedCount };
   },
 };

@@ -8,6 +8,7 @@ import { useLocation } from '../hooks/useLocation';
 import { locationReportService, petStatusService } from '../services/locationReportService';
 import { locationService } from '../services/locationService';
 import Button from '../components/ui/Button';
+import { isSafariOrRestrictive, getBrowserName } from '../utils/browserDetection';
 
 const PetProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,11 @@ const PetProfile = () => {
   const [reportSent, setReportSent] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [userClickedShare, setUserClickedShare] = useState(false);
+
+  // Detectar navegador restrictivo SÍNCRONAMENTE para evitar race conditions
+  // Esto debe hacerse antes de cualquier useEffect que pueda solicitar ubicación
+  const isRestrictiveBrowser = isSafariOrRestrictive();
 
   const {
     coordinates,
@@ -27,6 +33,13 @@ const PetProfile = () => {
     isSupported,
   } = useLocation();
 
+  // Log de detección de navegador
+  useEffect(() => {
+    console.log('🔧 PetProfile - Navegador restrictivo:', isRestrictiveBrowser);
+    console.log('🔧 PetProfile - User Agent:', navigator.userAgent);
+    console.log('🔧 PetProfile - Platform:', navigator.platform);
+  }, [isRestrictiveBrowser]);
+
   // Verificar si el usuario actual es el dueño
   useEffect(() => {
     const checkOwnership = async () => {
@@ -34,6 +47,12 @@ const PetProfile = () => {
         const {
           data: { user },
         } = await supabase.auth.getUser();
+
+        console.log('👤 Verificando propiedad:', {
+          userId: user?.id,
+          petOwnerId: pet?.user_id,
+          isOwner: user && pet && pet.user_id === user.id
+        });
 
         if (user && pet && pet.user_id === user.id) {
           setIsOwner(true);
@@ -73,6 +92,7 @@ const PetProfile = () => {
   }, [id]);
 
   // Solicitar ubicación automáticamente si la mascota está perdida y NO es el dueño
+  // SOLO en navegadores que permiten solicitud automática (no Safari/iOS)
   useEffect(() => {
     const requestLocationAutomatically = async () => {
       if (
@@ -81,7 +101,8 @@ const PetProfile = () => {
         pet?.status === 'lost' &&
         !reportSent &&
         !coordinates &&
-        isSupported
+        isSupported &&
+        !isRestrictiveBrowser // NO solicitar automáticamente en Safari/iOS
       ) {
         // Solicitar ubicación automáticamente
         try {
@@ -100,6 +121,7 @@ const PetProfile = () => {
     reportSent,
     coordinates,
     isSupported,
+    isRestrictiveBrowser,
     getCurrentLocation,
   ]);
 
@@ -141,8 +163,24 @@ const PetProfile = () => {
 
       setUpdatingStatus(true);
       try {
-        await petStatusService.updatePetStatus(pet.id, newStatus);
+        const { dismissedCount } = await petStatusService.handlePetStatusChange(
+          pet.id,
+          newStatus
+        );
         setPet((prev) => (prev ? { ...prev, status: newStatus } : null));
+
+        // Mostrar mensaje de confirmación
+        if (newStatus === 'found' && dismissedCount > 0) {
+          alert(
+            `✅ Mascota marcada como encontrada y ${dismissedCount} ${
+              dismissedCount === 1 ? 'reporte pendiente archivado' : 'reportes pendientes archivados'
+            }`
+          );
+        } else if (newStatus === 'lost') {
+          alert('🚨 Mascota marcada como perdida. Los usuarios podrán reportar su ubicación.');
+        } else if (newStatus === 'normal') {
+          alert('✓ Estado actualizado a normal');
+        }
       } catch (error) {
         console.error('Error actualizando estado:', error);
         alert('No se pudo actualizar el estado de la mascota');
@@ -152,6 +190,17 @@ const PetProfile = () => {
     },
     [pet?.id]
   );
+
+  // Manejar click del botón de compartir ubicación (para Safari/iOS)
+  const handleShareLocationClick = useCallback(async () => {
+    setUserClickedShare(true);
+    try {
+      await getCurrentLocation();
+    } catch (error) {
+      console.error('Error al obtener ubicación:', error);
+      // El error ya se maneja en el hook useLocation
+    }
+  }, [getCurrentLocation]);
 
   // Calcular edad desde birth_date
   const calculateAge = (birthDate: string) => {
@@ -205,6 +254,7 @@ const PetProfile = () => {
 
             {/* Estados de ubicación */}
             {reportSent ? (
+              /* ESTADO: Ubicación ya enviada */
               <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5" />
@@ -228,6 +278,7 @@ const PetProfile = () => {
                 )}
               </div>
             ) : locationLoading ? (
+              /* ESTADO: Obteniendo ubicación */
               <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
                 <div className="flex items-center gap-2">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -235,25 +286,47 @@ const PetProfile = () => {
                 </div>
               </div>
             ) : locationError ? (
+              /* ESTADO: Error al obtener ubicación */
               <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
                 <p className="mb-3">{locationError}</p>
                 <Button
-                  onClick={getCurrentLocation}
+                  onClick={handleShareLocationClick}
                   variant="secondary"
                   className="flex items-center gap-2"
                 >
                   <Navigation className="h-4 w-4" />
-                  Compartir mi Ubicación
+                  Intentar de Nuevo
                 </Button>
               </div>
             ) : !isSupported ? (
+              /* ESTADO: Navegador no soporta geolocalización */
               <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
-                <p>Tu navegador no soporta geolocalización</p>
+                <p>Tu {getBrowserName()} no soporta geolocalización</p>
+              </div>
+            ) : isRestrictiveBrowser && !userClickedShare ? (
+              /* FLUJO SAFARI/iOS: Mostrar botón grande antes de solicitar permisos */
+              <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm text-center">
+                <p className="mb-4 text-base">
+                  Para ayudar a encontrar a {pet.name}, necesitamos tu ubicación actual.
+                </p>
+                <Button
+                  onClick={handleShareLocationClick}
+                  size="lg"
+                  variant="secondary"
+                  className="w-full py-4 text-lg font-bold flex items-center justify-center gap-3 bg-white text-red-600 hover:bg-red-50 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                >
+                  <Navigation className="h-6 w-6" />
+                  📍 Ayudar con mi Ubicación
+                </Button>
+                <p className="mt-3 text-sm text-white/80">
+                  Tu ubicación solo se compartirá con el dueño de {pet.name}
+                </p>
               </div>
             ) : (
+              /* FLUJO NORMAL: Botón para Chrome/Firefox/Edge */
               <div className="bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
                 <Button
-                  onClick={getCurrentLocation}
+                  onClick={handleShareLocationClick}
                   variant="secondary"
                   className="flex items-center gap-2"
                 >
