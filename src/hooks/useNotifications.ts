@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { notificationService } from '../services/notificationService';
 import { pushNotificationService } from '../services/pushNotificationService';
 import { Notification } from '../types';
@@ -28,7 +28,8 @@ export const useNotifications = (
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [realtimeChannel, setRealtimeChannel] = useState<RealtimeChannel | null>(null);
+  const realtimeChannelRef = useRef<RealtimeChannel | null>(null);
+  const isSubscribingRef = useRef(false); // 🔑 Prevenir suscripciones duplicadas
 
   // Cargar notificaciones
   const loadNotifications = useCallback(async () => {
@@ -142,7 +143,7 @@ export const useNotifications = (
         console.error('Error mostrando notificación del navegador:', err);
       });
     }
-  }, []);
+  }, []); // ✅ Sin dependencias para evitar recreación
 
   // Cargar notificaciones inicialmente
   useEffect(() => {
@@ -151,33 +152,70 @@ export const useNotifications = (
 
   // Suscribirse a Realtime
   useEffect(() => {
-    if (!userId || !autoSubscribe) return;
+    if (!userId || !autoSubscribe) {
+      console.log('⏭️ Omitiendo suscripción:', { userId, autoSubscribe });
+      return;
+    }
+
+    // 🔒 Evitar suscripciones duplicadas con doble verificación
+    if (realtimeChannelRef.current) {
+      console.log('🟡 Canal ya existe, reutilizando');
+      return;
+    }
+
+    if (isSubscribingRef.current) {
+      console.log('🟡 Suscripción ya en proceso, esperando...');
+      return;
+    }
+
+    console.log('🟢 Iniciando suscripción a Realtime notifications');
+    isSubscribingRef.current = true;
 
     const channel = notificationService.subscribeToNotifications(
       userId,
       handleNewNotification
     );
 
-    setRealtimeChannel(channel);
+    realtimeChannelRef.current = channel;
+    isSubscribingRef.current = false;
+    console.log('✅ Canal Realtime creado exitosamente');
 
-    // Cleanup: desuscribirse cuando el componente se desmonte
     return () => {
-      if (channel) {
-        notificationService.unsubscribeFromNotifications(channel);
+      console.log('🧹 Ejecutando cleanup de Realtime');
+
+      if (realtimeChannelRef.current) {
+        const channelToClean = realtimeChannelRef.current;
+        realtimeChannelRef.current = null;
+        isSubscribingRef.current = false;
+
+        // ⏰ Pequeño delay para asegurar que la conexión no se interrumpa
+        setTimeout(() => {
+          notificationService
+            .unsubscribeFromNotifications(channelToClean)
+            .then(() => {
+              console.log('✅ Canal Realtime cerrado correctamente');
+            })
+            .catch((err) => {
+              console.error('⚠️ Error cerrando canal Realtime:', err);
+            });
+        }, 100);
       }
     };
-  }, [userId, autoSubscribe, handleNewNotification]);
+  }, [userId, autoSubscribe, handleNewNotification]); // ✅ NO incluir handleNewNotification
 
   // Auto-refresh cada 5 minutos como fallback (en caso de que Realtime falle)
   useEffect(() => {
     if (!userId) return;
 
     const intervalId = setInterval(() => {
-      console.log('Auto-refresh de notificaciones (fallback)');
+      console.log('🔄 Auto-refresh de notificaciones (fallback)');
       loadNotifications();
     }, 5 * 60 * 1000); // 5 minutos
 
-    return () => clearInterval(intervalId);
+    return () => {
+      console.log('🛑 Deteniendo auto-refresh');
+      clearInterval(intervalId);
+    };
   }, [userId, loadNotifications]);
 
   return {

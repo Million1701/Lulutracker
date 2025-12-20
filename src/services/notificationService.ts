@@ -152,8 +152,13 @@ export const notificationService = {
     userId: string,
     callback: (notification: Notification) => void
   ): RealtimeChannel {
+    // 🔑 Nombre único del canal por usuario
+    const channelName = `notifications-${userId}-${Date.now()}`;
+
+    console.log(`📡 Creando canal: ${channelName}`);
+
     const channel = supabase
-      .channel(`notifications:${userId}`)
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
@@ -163,28 +168,46 @@ export const notificationService = {
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          console.log('Nueva notificación recibida:', payload);
+          console.log('📨 Realtime payload:', payload);
           callback(payload.new as Notification);
         }
       )
-      .subscribe((status) => {
+      .subscribe((status, err) => {
+        console.log(`📡 Estado realtime [${channelName}]:`, status);
+
         if (status === 'SUBSCRIBED') {
-          console.log('Suscrito a notificaciones en tiempo real');
+          console.log(`✅ Realtime activo en canal ${channelName}`);
         }
+
         if (status === 'CHANNEL_ERROR') {
-          console.error('Error en canal de notificaciones');
+          console.error(`❌ Error realtime en canal ${channelName}:`, err);
+        }
+
+        if (status === 'TIMED_OUT') {
+          console.error(`⏱️ Timeout en canal ${channelName}`);
+        }
+
+        if (status === 'CLOSED') {
+          console.log(`🔒 Canal ${channelName} cerrado`);
         }
       });
 
     return channel;
   },
 
-  /**
-   * Cancelar suscripción a notificaciones
-   */
   async unsubscribeFromNotifications(channel: RealtimeChannel): Promise<void> {
-    await supabase.removeChannel(channel);
-    console.log('Desuscrito de notificaciones');
+    try {
+      console.log(`🔴 Desuscribiendo canal: ${channel.topic}`);
+
+      // Primero desuscribir, luego remover
+      await channel.unsubscribe();
+      await supabase.removeChannel(channel);
+
+      console.log(`✅ Canal ${channel.topic} removido correctamente`);
+    } catch (error) {
+      console.error('❌ Error al desuscribir:', error);
+      throw error;
+    }
   },
 
   /**
