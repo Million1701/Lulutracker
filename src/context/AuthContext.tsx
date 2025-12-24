@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, useEffect, ReactNode } from 'react';
 import { User } from '../types';
 import { useAuth } from '../hooks/useAuth';
 
@@ -12,7 +12,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { user, loading } = useAuth();
 
-  localStorage.setItem('user', JSON.stringify(user?.id));
+  // Persist user ID to localStorage only when user changes
+  useEffect(() => {
+    if (user?.id) {
+      localStorage.setItem('user', JSON.stringify(user.id));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>

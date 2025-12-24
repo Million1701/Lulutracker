@@ -3,72 +3,171 @@
 @tailwind utilities;
 
 @layer base {
+  /* CSS Variables para temas */
+  :root {
+    /* Light mode colors */
+    --color-primary: 37 99 235; /* blue-600 */
+    --color-background: 255 255 255;
+    --color-foreground: 17 24 39;
+    --color-card: 255 255 255;
+    --color-card-foreground: 17 24 39;
+    --color-border: 229 231 235;
+    --color-muted: 243 244 246;
+    --color-accent: 59 130 246;
+
+    /* Glassmorphism */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-shadow: rgba(31, 38, 135, 0.37);
+  }
+
+  .dark {
+    /* Dark mode colors */
+    --color-primary: 59 130 246; /* blue-500 */
+    --color-background: 17 24 39;
+    --color-foreground: 243 244 246;
+    --color-card: 31 41 55;
+    --color-card-foreground: 243 244 246;
+    --color-border: 55 65 81;
+    --color-muted: 31 41 55;
+    --color-accent: 96 165 250;
+
+    /* Glassmorphism dark */
+    --glass-bg: rgba(17, 24, 39, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: rgba(0, 0, 0, 0.37);
+  }
+
+  /* Body base styles */
   body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200;
+    @apply bg-white dark:bg-dark-900 text-gray-900 dark:text-gray-100 transition-colors duration-300;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar personalizado */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-dark-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-dark-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-dark-500;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-primary-500 text-white;
+  }
+}
+
+@layer components {
+  /* Glassmorphism utilities */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 12px 40px 0 var(--glass-shadow);
+  }
+
+  /* Gradientes animados */
+  .gradient-animate {
+    background-size: 200% 200%;
+    animation: gradient-x 3s ease infinite;
+  }
+
+  /* Efectos de brillo */
+  .shimmer-effect {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  /* Bordes con gradiente */
+  .border-gradient {
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+  }
+
+  .border-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    margin: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  /* Card moderno */
+  .modern-card {
+    @apply bg-white dark:bg-dark-800 rounded-2xl shadow-lg dark:shadow-glass-dark border border-gray-200 dark:border-dark-700 transition-all duration-300;
+  }
+
+  .modern-card:hover {
+    @apply shadow-xl dark:shadow-glass-dark transform -translate-y-1;
+  }
+
+  /* Texto con gradiente */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r;
+  }
+
+  .text-gradient-primary {
+    @apply text-gradient from-primary-600 to-primary-400;
+  }
+
+  .text-gradient-aurora {
+    @apply text-gradient from-purple-600 via-pink-500 to-blue-500;
+  }
+
+  .text-gradient-sunset {
+    @apply text-gradient from-orange-500 to-yellow-400;
+  }
+
+  /* Botones modernos */
+  .btn-glass {
+    @apply glass hover:shadow-glow transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-neon {
+    @apply bg-primary-600 text-white shadow-neon hover:shadow-glow-lg transition-all duration-300;
   }
 }
 
 @layer utilities {
-  /* Animaciones de entrada */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  /* Estados iniciales - invisible hasta que se active */
+  /* Animaciones de entrada con scroll - MANTENER COMPATIBILIDAD */
   .scroll-animate {
     opacity: 0;
   }
 
-  /* Animaciones que se activan con scroll */
   .scroll-animate.is-visible {
     animation-fill-mode: forwards;
   }
@@ -93,7 +192,7 @@
     animation: scaleIn 0.6s ease-out forwards;
   }
 
-  /* Animaciones inmediatas (sin scroll) - para hero section */
+  /* Animaciones inmediatas (sin scroll) */
   .animate-fadeIn-immediate {
     animation: fadeIn 0.8s ease-out;
   }
@@ -135,8 +234,94 @@
     animation-delay: 0.5s;
   }
 
-  /* Para que las animaciones con delay no se vean antes */
   .animation-fill-both {
     animation-fill-mode: both;
+  }
+
+  /* Utilities modernos */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  /* Blur condicional */
+  .blur-when-loading {
+    @apply transition-all duration-300;
+  }
+
+  .blur-when-loading.loading {
+    @apply blur-sm opacity-50 pointer-events-none;
+  }
+}
+
+/* Keyframes adicionales (compatibilidad con animaciones anteriores) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Soporte para reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -52,6 +52,7 @@ export const petService = {
 
     if (error) throw error;
 
-    location.reload();
+    // Note: La recarga de la página ahora se debe manejar en el componente
+    // que llama a este servicio para mejor UX
   },
 };
